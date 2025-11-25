@@ -16,8 +16,11 @@ type DeviceCard = {
   color: string | null;
   serial: string | null;
 
+  // texto ya formateado "HH:MM"
   entryTime: string;
-  exitTime: string;
+  // 👇 AHORA PUEDE SER null (nuevo = sin salida)
+  exitTime: string | null;
+
   photoUrl: string | null;
 
   isFrequent: boolean;
@@ -72,24 +75,22 @@ export default function EnteredDevices() {
           serial: md.serial ?? null,
 
           // Hora de entrada
-          entryTime: new Date(
-            md.checkinAt ?? md.updatedAt
-          ).toLocaleTimeString("es-ES", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          entryTime: new Date(md.checkinAt ?? md.updatedAt).toLocaleTimeString(
+            "es-ES",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          ),
 
-          // 👇 Hora de salida: primero checkoutAt y si no, updatedAt
-          exitTime:
-            md.checkoutAt || md.updatedAt
-              ? new Date(md.checkoutAt ?? md.updatedAt).toLocaleTimeString(
-                  "es-ES",
-                  {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }
-                )
-              : "—",
+          // ❌ ANTES: checkoutAt o updatedAt
+          // ✅ AHORA: SOLO checkoutAt. Si no hay, NO tiene salida -> null
+          exitTime: md.checkoutAt
+            ? new Date(md.checkoutAt).toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : null,
 
           photoUrl: md.photoURL ?? null,
           isFrequent: false,
@@ -106,24 +107,22 @@ export default function EnteredDevices() {
           serial: null,
 
           // Hora de entrada
-          entryTime: new Date(
-            pc.checkinAt ?? pc.updatedAt
-          ).toLocaleTimeString("es-ES", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          entryTime: new Date(pc.checkinAt ?? pc.updatedAt).toLocaleTimeString(
+            "es-ES",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          ),
 
-          // 👇 Hora de salida: primero checkoutAt y si no, updatedAt
-          exitTime:
-            pc.checkoutAt || pc.updatedAt
-              ? new Date(pc.checkoutAt ?? pc.updatedAt).toLocaleTimeString(
-                  "es-ES",
-                  {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }
-                )
-              : "—",
+          // ❌ ANTES: checkoutAt o updatedAt
+          // ✅ AHORA: SOLO checkoutAt, nuevo = null
+          exitTime: pc.checkoutAt
+            ? new Date(pc.checkoutAt).toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : null,
 
           photoUrl: pc.photoURL ?? null,
           isFrequent: frequentIds.has(pc.id),
@@ -224,6 +223,7 @@ export default function EnteredDevices() {
                 key={d.id}
                 className="ed-device-card"
                 onClick={() => {
+                  // 👉 Aquí guardamos lo que va a leer DeviceDetail
                   sessionStorage.setItem(
                     "selectedDevice",
                     JSON.stringify(d)
@@ -310,7 +310,9 @@ export default function EnteredDevices() {
 
                       <div className="ed-mini-card">
                         <span className="ed-mini-label">Hora salida:</span>
-                        <span className="ed-mini-value">{d.exitTime}</span>
+                        <span className="ed-mini-value">
+                          {d.exitTime ?? "—"}
+                        </span>
                       </div>
                     </div>
                   </div>

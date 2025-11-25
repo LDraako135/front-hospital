@@ -1,73 +1,223 @@
-# React + TypeScript + Vite
+# 📘 Frontend -- Hospital Device Management UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto es el **frontend del sistema hospitalario de gestión de
+dispositivos**, incluyendo computadoras, dispositivos médicos y equipos
+ingresados. Proporciona una interfaz clara, responsiva y fácil de usar
+que se comunica directamente con el backend construido en Elysia + Bun.
 
-Currently, two official plugins are available:
+------------------------------------------------------------------------
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 1. 🌐 URL de la página
 
-## React Compiler
+ ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.1.4:5173/
+  ➜  Network: http://172.29.160.1:5173/
+------------------------------------------------------------------------
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 2. 📖 Descripción del proyecto
 
-## Expanding the ESLint configuration
+El objetivo del proyecto es permitir al personal hospitalario registrar,
+consultar y gestionar dispositivos que ingresan o salen del hospital.\
+El sistema ofrece funcionalidades como check-in, checkout, gestión de
+computadoras frecuentes y visualización de detalles de cada equipo.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Tecnologías y librerías usadas
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+-   React con TypeScript\
+-   Vite\
+-   Material Web (MD3)\
+-   Axios / Fetch\
+-   React Router\
+-   Estilos CSS modularizados\
+-   Bun (runtime)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+------------------------------------------------------------------------
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 3. 📁 Estructura del proyecto
+
+    public/
+    src/
+    ├── assets/
+    ├── components/
+    │   ├── BottomNav.css
+    │   ├── BottomNav.tsx
+    │   ├── ImageUploadPreview.tsx
+    │   └── ui.tsx
+    ├── lib/
+    │   ├── api.ts
+    │   └── auth-client.ts
+    ├── md3/
+    ├── pages/
+    │   ├── auth/
+    │   ├── computersChekin/
+    │   │   ├── computersChekin.css
+    │   │   └── computersChekin.tsx
+    │   ├── deviceDetail/
+    │   │   ├── deviceDetail.css
+    │   │   └── deviceDetail.tsx
+    │   ├── enteredDevices/
+    │   │   ├── enteredDevices.css
+    │   │   └── enteredDevices.tsx
+    │   ├── frequentComputers/
+    │   │   ├── frequentComputers.css
+    │   │   └── frequentComputers.tsx
+    │   ├── medicalDeviceChekin/
+    │   ├── NotFound.css
+    │   └── NotFound.tsx
+    ├── App.css
+    ├── App.tsx
+    ├── index.css
+    ├── main.tsx
+    └── material-web.d.ts
+
+    .env
+    .env.example
+    dockerfile
+    package.json
+    package-lock.json
+    eslint.config.js
+    index.html
+
+------------------------------------------------------------------------
+
+## 4. 📂 Explicación de carpetas
+
+### **assets/**
+
+Imágenes, íconos u otros archivos estáticos utilizados en la interfaz.
+
+### **components/**
+
+Componentes reutilizables del sistema.\
+Incluye: - **BottomNav**: navegación inferior tipo aplicación móvil.\
+- **ImageUploadPreview**: componente de subida y vista previa de
+imágenes.\
+- **ui.tsx**: componentes globales reutilizables.
+
+### **lib/**
+
+Lógica central del frontend: - **api.ts**: funciones de comunicación con
+la API backend. - **auth-client.ts**: autenticación y manejo de sesión.
+
+### **pages/**
+
+Cada carpeta representa una vista/pantalla del sistema: -
+**computersChekin** → check-in de computadoras. - **deviceDetail** →
+detalles de un dispositivo. - **enteredDevices** → dispositivos
+ingresados. - **frequentComputers** → computadoras frecuentes. -
+**medicalDeviceChekin** → check-in de dispositivos médicos. - **auth** →
+login/autenticación. - **NotFound** → página 404.
+
+### **md3/**
+
+Configuración y componentes extendidos de Material Design 3.
+
+### **App.tsx / main.tsx**
+
+Punto de entrada principal de la aplicación.
+
+------------------------------------------------------------------------
+
+## 5. ⚙️ Configuración y entorno
+
+El archivo `.env` controla la dirección del backend:
+
+    VITE_API_URL=http://localhost:3000
+
+`.env.example` sirve como plantilla para nuevos entornos.
+
+------------------------------------------------------------------------
+
+## 6. ▶️ Cómo ejecutar el proyecto
+
+### 🧪 Desarrollo
+
+1.  Clona el repositorio\
+2.  Instala dependencias\
+
+``` bash
+bun install
+# o
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3.  Crea tu archivo `.env` desde `.env.example`
+4.  Inicia el servidor:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+``` bash
+bun run dev
+# o
+npm run dev
 ```
+
+5.  Abre en el navegador:
+
+```{=html}
+<!-- -->
+```
+    http://localhost:5173
+
+### 🚀 Producción
+
+``` bash
+npm run build
+npm run preview
+```
+
+### 🐳 Docker
+
+``` bash
+docker build -t front-hospital .
+docker run -p 5173:5173 front-hospital
+```
+
+------------------------------------------------------------------------
+
+## 7. 📡 Endpoints consumidos
+
+  ----------------------------------------------------------------------------------------------
+  Módulo           Método           Ruta                              Descripción
+  ---------------- ---------------- --------------------------------- --------------------------
+  Devices          GET              /devices/entered                  Ver dispositivos
+                                                                      ingresados
+
+  Devices          DELETE           /devices/:id/checkout             Checkout
+
+  Computers        GET              /computers                        Listar computadoras
+
+  Computers        POST             /computers/checkin                Check-in normal
+
+  Frequent         GET              /computers/frequent               Listar frecuentes
+
+  Frequent         POST             /computers/frequent/register      Registrar frecuente
+
+  Frequent         POST             /computers/frequent/:id/checkin   Check-in rápido
+
+  Medical          POST             /medical-devices/checkin          Check-in dispositivo
+                                                                      médico
+  ----------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## 8. 🏗️ Arquitectura del proyecto
+
+### Diagrama general (descriptivo)
+
+    UI Components
+          ↓
+    Pages (views)
+          ↓
+    Hooks / Stores
+          ↓
+    lib/api.ts  →  Backend (Elysia + Bun)
+
+Si deseas, puedo generar un **UML completo en PDF o imagen**.
+
+------------------------------------------------------------------------
+
+## ✔️ Estado del proyecto
+
+Sistema funcionando correctamente con integración al backend
+hospitalario.
+
+------------------------------------------------------------------------

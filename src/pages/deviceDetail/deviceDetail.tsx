@@ -3,15 +3,38 @@ import { useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import "./deviceDetail.css";
 
+type DeviceKind = "computer" | "medical";
+
+type DeviceCard = {
+  id: string;
+  kind: DeviceKind;
+
+  brand: string;
+  model: string;
+  userName: string;
+  userId: string | null;
+
+  color: string | null;
+  serial: string | null;
+
+  entryTime: string;       // texto tipo "HH:MM"
+  exitTime: string | null; // null = sin salida
+
+  photoUrl: string | null;
+
+  isFrequent: boolean;
+};
+
 export default function DeviceDetail() {
   const navigate = useNavigate();
-  const [device, setDevice] = useState<any>(null);
+  const [device, setDevice] = useState<DeviceCard | null>(null);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("selectedDevice");
     if (stored) {
       try {
-        setDevice(JSON.parse(stored));
+        const parsed = JSON.parse(stored) as DeviceCard;
+        setDevice(parsed);
       } catch {
         setDevice(null);
       }
@@ -21,7 +44,7 @@ export default function DeviceDetail() {
   const handleExit = async () => {
     if (!device) return;
 
-    // si ya tiene salida, no hacemos nada
+    // Si ya le registraste salida antes, no hace nada
     if (device.exitTime) {
       alert("Este dispositivo ya tiene una salida registrada.");
       return;
@@ -34,13 +57,18 @@ export default function DeviceDetail() {
 
       if (!res.ok) throw new Error("Error al registrar salida");
 
+      // La hora de salida la definimos aquí en el front
       const now = new Date();
       const exitTime = now.toLocaleTimeString("es-ES", {
         hour: "2-digit",
         minute: "2-digit",
       });
 
-      const updated = { ...device, exitTime };
+      const updated: DeviceCard = {
+        ...device,
+        exitTime,
+      };
+
       sessionStorage.setItem("selectedDevice", JSON.stringify(updated));
       setDevice(updated);
 
@@ -52,14 +80,27 @@ export default function DeviceDetail() {
     }
   };
 
+  // 🔁 Versión sin CORS: solo navega al flujo de “computador frecuente”
   const handleCreateFrequent = () => {
-    // si es computador, lo mandamos a crear ingreso frecuente ("dar entrada frecuente")
-    if (device?.kind === "computer") {
-      navigate("/computers/checkin?frequent=1");
-    } else {
-      // si es biomédico, simplemente a ingreso biomédico normal
-      navigate("/medical/checkin");
+    if (!device) return;
+    if (device.kind !== "computer") {
+      alert("Solo los computadores pueden ser frecuentes.");
+      return;
     }
+
+    // Lo mandamos al formulario de computadores en modo frecuente
+    navigate("/computers/checkin?frequent=1", {
+      state: {
+        fromDeviceDetail: true,
+        deviceId: device.id,
+        brand: device.brand,
+        model: device.model,
+        color: device.color,
+        userName: device.userName,
+        userId: device.userId,
+        photoUrl: device.photoUrl,
+      },
+    });
   };
 
   if (!device) {
@@ -130,18 +171,39 @@ export default function DeviceDetail() {
           </div>
         </div>
 
+        {/* REGISTRO DE TIEMPOS */}
+        <div className="detail-info-section">
+          <h3 className="detail-section-title">Registro de tiempos</h3>
+
+          <p className="detail-user">Entrada: {device.entryTime}</p>
+          <p className="detail-user">
+            Salida: {device.exitTime ? device.exitTime : "—"}
+          </p>
+        </div>
+
         {/* FREQUENTLY QR SOLO PARA COMPUTADORES */}
         {isComputer && (
           <div className="detail-frequent-box">
             <div className="freq-left">
-              <h3 className="freq-title">Frequently QR</h3>
+              <h3 className="freq-title">
+                {device.isFrequent ? "Computador frecuente" : "Frequently QR"}
+              </h3>
               <p className="freq-text">
                 Usa estos códigos o el flujo de entrada frecuente para registrar
                 ingreso de este computador.
               </p>
-              <button className="freq-btn" onClick={handleCreateFrequent}>
-                Dar entrada frecuente
-              </button>
+
+              {!device.isFrequent && (
+                <button className="freq-btn" onClick={handleCreateFrequent}>
+                  Dar entrada frecuente
+                </button>
+              )}
+
+              {device.isFrequent && (
+                <p className="freq-text">
+                  Este computador ya está registrado como frecuente.
+                </p>
+              )}
             </div>
 
             <div className="freq-qr-column">
