@@ -36,6 +36,22 @@ export default function BottomNav() {
     setShowRegisterMenu(false);
   }
 
+  async function handleLogout() {
+    try {
+      // Call logout endpoint
+      await fetch("/auth/sign-out", {
+        method: "POST",
+        credentials: "include",
+      });
+      // Redirect to login
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      // Redirect anyway
+      navigate("/login");
+    }
+  }
+
   return (
     <>
       {/* SUBMENÚ */}
@@ -154,6 +170,38 @@ export default function BottomNav() {
               </svg>
             </span>
             <span className="md3-bottom-nav-label">Registrar</span>
+          </button>
+
+          {/* LOGOUT */}
+          <button
+            type="button"
+            className="md3-bottom-nav-action"
+            onClick={handleLogout}
+          >
+            <span className="md3-bottom-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M16 17l5-5-5-5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M21 12H9"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span className="md3-bottom-nav-label">Salir</span>
           </button>
 
         </div>
