@@ -1,4 +1,3 @@
-/* --- Estilos Generales para la Página de Detalles --- */
 .md3-page {
   font-family: "Roboto", system-ui;
   padding: 20px;
@@ -24,14 +23,13 @@
   margin-bottom: 20px;
 }
 
-
 .volver-btn:hover {
-  background: #cfc1e5; /* Color más oscuro al pasar el ratón */
-  transform: translateY(-2px); /* Efecto de desplazamiento */
+  background: #cfc1e5;
+  transform: translateY(-2px);
 }
 
 .volver-btn:focus {
-  outline: none; /* Elimina el borde de foco */
+  outline: none;
 }
 
 /* --- Contenedor de Información del Dispositivo --- */
@@ -53,6 +51,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden; /* evita que la imagen se salga */
+}
+
+.device-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ajusta la imagen y evita deformación */
+  border-radius: 12px;
 }
 
 /* SVG */
@@ -88,55 +94,56 @@
   color: #413f43;
   font-size: 16px;
 }
+
 /* --- Botón de Dar salida --- */
 .dar-salida-btn {
-  background: #6c45ff; /* Color de fondo morado */
-  color: white; /* Texto blanco */
+  background: #6c45ff;
+  color: white;
   border: none;
-  padding: 12px 20px; /* Espaciado alrededor del texto */
-  border-radius: 24px; /* Bordes redondeados */
-  font-size: 14px; /* Tamaño de fuente pequeño */
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 20px; /* Separación superior */
-  transition: background-color 0.3s ease; /* Transición suave de color de fondo */
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
 }
 
 .dar-salida-btn:hover {
-  background: #5732d8; /* Color más oscuro cuando el usuario pasa el ratón */
+  background: #5732d8;
 }
 
 .dar-salida-btn:focus {
-  outline: none; /* Elimina el borde de foco */
+  outline: none;
 }
 
 /* --- Botón de Volver --- */
 .volver-btn {
-  background: #f4e7ff; /* Color de fondo muy claro */
-  color: #6c45ff; /* Texto morado */
-  border: 1px solid #6c45ff; /* Borde morado */
-  padding: 12px 20px; /* Espaciado alrededor del texto */
-  border-radius: 24px; /* Bordes redondeados */
-  font-size: 14px; /* Tamaño de fuente pequeño */
+  background: #f4e7ff;
+  color: #6c45ff;
+  border: 1px solid #6c45ff;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 10px; /* Separación superior */
-  transition: background-color 0.3s ease; /* Transición suave de color de fondo */
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .volver-btn:hover {
-  background: #f1d9ff; /* Color más oscuro cuando el usuario pasa el ratón */
+  background: #f1d9ff;
 }
 
 .volver-btn:focus {
-  outline: none; /* Elimina el borde de foco */
+  outline: none;
 }
 
 /* --- Contenedor de Botones --- */
 .device-info-row {
   display: flex;
-  justify-content: space-between; /* Alinea los botones de manera horizontal */
-  gap: 10px; /* Espacio entre los botones */
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .fd-filters {
@@ -145,13 +152,13 @@
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   transition: max-height 0.3s ease, padding 0.3s ease;
-  max-height: 0; /* Inicialmente oculto */
+  max-height: 0;
   overflow: hidden;
   padding: 0;
 }
 
 .fd-filters.show {
-  max-height: 1000px; /* Ajusta según sea necesario */
+  max-height: 1000px;
   padding: 10px;
 }
 
@@ -170,9 +177,6 @@
   background-color: #45a049;
 }
 
-
 .fd-filter {
   margin-bottom: 10px;
 }
-
-

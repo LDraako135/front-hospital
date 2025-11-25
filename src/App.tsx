@@ -33,8 +33,10 @@ export default function App() {
           <Route path="/devices/entered" element={<EnteredDevices />} />
           <Route path="/computers/frequent" element={<FrequentComputers />} />
 
-          <Route path="/device/:deviceId" element={<DeviceDetail />} /> {/* Agrega esta ruta */}
+          {/* Ruta corregida */}
+          <Route path="/devices/:deviceId" element={<DeviceDetail />} />
         </Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

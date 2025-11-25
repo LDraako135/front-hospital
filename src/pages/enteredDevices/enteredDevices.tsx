@@ -2,31 +2,30 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./enteredDevices.css";
 
+type DeviceKind = "computer" | "medical";
+
 type DeviceCard = {
   id: string;
+  kind: DeviceKind;
+
+  brand: string;
   model: string;
-  provider: string;
-  user: string;
+  userName: string;
+  userId: string | null;
+
+  color: string | null;
+  serial: string | null;
+
   entryTime: string;
   exitTime: string;
+  photoUrl: string | null;
+
+  isFrequent: boolean;
 };
 
-// Lo que llega desde tu API /api/devices/entered
-type EnteredDeviceApi = {
-  device: {
-    id: string;
-    brand: string;
-    model: string;
-    owner: {
-      name: string;
-      id: string;
-    };
-  };
-  checkinAt: string;
-  checkoutAt?: string | null;
-};
-
-const API_URL = "/api/devices/entered"; // 👈 tu controlador tiene prefix /api + /devices/entered
+const MEDICAL_URL = "/api/medicaldevices";
+const COMPUTERS_URL = "/api/computers";
+const FREQUENT_COMPUTERS_URL = "/api/computers/frequent";
 
 export default function EnteredDevices() {
   const navigate = useNavigate();
@@ -35,46 +34,77 @@ export default function EnteredDevices() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --------- 🔗 Cargar dispositivos desde tu backend ---------
   useEffect(() => {
     async function loadDevices() {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(API_URL, {
-          // si usas JWT o algo en AuthMiddleware, agrega headers aquí:
-          // headers: { Authorization: `Bearer ${token}` }
+        const [medRes, compRes, freqRes] = await Promise.all([
+          fetch(MEDICAL_URL),
+          fetch(COMPUTERS_URL),
+          fetch(FREQUENT_COMPUTERS_URL),
+        ]);
+
+        if (!medRes.ok) throw new Error("Error al cargar dispositivos médicos");
+        if (!compRes.ok) throw new Error("Error al cargar computadores");
+        if (!freqRes.ok)
+          throw new Error("Error al cargar computadores frecuentes");
+
+        const medicalData: any[] = await medRes.json();
+        const computerData: any[] = await compRes.json();
+        const frequentRaw: any[] = await freqRes.json();
+
+        const frequentIds = new Set<string>();
+        frequentRaw.forEach((item: any) => {
+          const d = item.device ?? item;
+          if (d && d.id) frequentIds.add(d.id);
         });
 
-        if (!res.ok) {
-          throw new Error(`Error HTTP ${res.status}`);
-        }
-
-        const data: EnteredDeviceApi[] = await res.json();
-
-        // Mapear a lo que tu UI espera
-        const mapped: DeviceCard[] = data.map((item) => ({
-          id: item.device.id,
-          model: item.device.model,
-          provider: item.device.brand,
-          user: item.device.owner.name,
-          entryTime: new Date(item.checkinAt).toLocaleTimeString("es-ES", {
+        const medicalCards: DeviceCard[] = medicalData.map((md) => ({
+          id: md.id,
+          kind: "medical",
+          brand: md.brand,
+          model: md.model,
+          userName: md.owner?.name ?? "Sin usuario",
+          userId: md.owner?.id ?? null,
+          color: null,
+          serial: md.serial ?? null,
+          entryTime: new Date(
+            md.checkinAt ?? md.updatedAt ?? md.createdAt
+          ).toLocaleTimeString("es-ES", {
             hour: "2-digit",
             minute: "2-digit",
           }),
-          exitTime: item.checkoutAt
-            ? new Date(item.checkoutAt).toLocaleTimeString("es-ES", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : "—",
+          exitTime: "—",
+          photoUrl: md.photoURL ?? null,
+          isFrequent: false,
         }));
 
-        setDevices(mapped);
-      } catch (err) {
+        const computerCards: DeviceCard[] = computerData.map((pc) => ({
+          id: pc.id,
+          kind: "computer",
+          brand: pc.brand,
+          model: pc.model,
+          userName: pc.owner?.name ?? "Sin usuario",
+          userId: pc.owner?.id ?? null,
+          color: pc.color ?? null,
+          serial: null,
+          entryTime: new Date(
+            pc.checkinAt ?? pc.updatedAt ?? pc.createdAt
+          ).toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          exitTime: "—",
+          photoUrl: pc.photoURL ?? null,
+          isFrequent: frequentIds.has(pc.id),
+        }));
+
+        setDevices([...medicalCards, ...computerCards]);
+      } catch (err: any) {
         console.error(err);
-        setError("No se pudieron cargar los dispositivos ingresados.");
+        setError(err?.message ?? "Error al cargar dispositivos");
       } finally {
         setLoading(false);
       }
@@ -83,125 +113,174 @@ export default function EnteredDevices() {
     loadDevices();
   }, []);
 
-  // ---------- 🔍 Normalizador para búsqueda ----------
-  const normalize = (text: string) =>
-    text
+  const normalize = (s: string) =>
+    s
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .trim();
 
-  // ---------- 🔍 Filtro que busca en todos los campos ----------
-  const filteredDevices = devices.filter((device) => {
-    const searchText = normalize(search);
-    if (!searchText) return true;
+  const filteredDevices = devices.filter((d) => {
+    if (!search) return true;
 
-    const fullText = normalize(
-      `${device.model} 
-       ${device.provider} 
-       ${device.user} 
-       ${device.entryTime} 
-       ${device.exitTime}`
+    const frequentLabel =
+      d.kind === "computer"
+        ? d.isFrequent
+          ? "computador frecuente"
+          : "computador no frecuente"
+        : "";
+
+    const text = normalize(
+      `${d.brand} ${d.model} ${d.userName} ${d.userId ?? ""} ${d.serial ?? ""
+      } ${d.color ?? ""} ${frequentLabel}`
     );
 
-    return fullText.includes(searchText);
+    return text.includes(normalize(search));
   });
 
   return (
-    <main className="md3-page">
-      <section className="md3-card fd-card">
-        <h1 className="fd-title">Dispositivos ingresados</h1>
+    <main className="ed-page">
+      <section className="ed-container">
+        <header className="ed-header">
+          <h1 className="ed-title">Dispositivos ingresados</h1>
 
-        <button
-          className="new-entry-btn"
-          onClick={() => navigate("/medical/checkin")}
-        >
-          + Nuevo ingreso
-        </button>
+          <div className="ed-header-buttons">
+            <button
+              className="ed-new-button"
+              onClick={() => navigate("/medical/checkin")}
+            >
+              Ingreso Biomédico
+            </button>
 
-        {/* Buscador */}
-        <div className="fd-search-row">
-          <div className="fd-search-box">
-            <span className="fd-search-icon">🔍</span>
+            <button
+              className="ed-new-button ed-new-button--pc"
+              onClick={() => navigate("/computers/checkin")}
+            >
+              Ingreso Computador
+            </button>
+          </div>
+        </header>
+
+        <div className="ed-search-row">
+          <div className="ed-search-box">
+            <button type="button" className="ed-search-icon-btn">
+              ☰
+            </button>
             <input
-              className="fd-search-input"
-              placeholder="Buscar dispositivo..."
+              className="ed-search-input"
+              placeholder="Buscar por marca, modelo, usuario, serial, color…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            <span className="ed-search-icon"></span>
           </div>
         </div>
 
-        {/* Estados */}
         {loading && (
-          <p className="fd-status-text">Cargando dispositivos…</p>
+          <p className="ed-status-text">Cargando dispositivos ingresados…</p>
         )}
-
         {error && !loading && (
-          <p className="fd-status-text fd-status-error">{error}</p>
+          <p className="ed-status-text ed-status-error">{error}</p>
         )}
-
         {!loading && !error && filteredDevices.length === 0 && (
-          <p className="fd-status-text">
+          <p className="ed-status-text">
             No se encontraron dispositivos ingresados.
           </p>
         )}
 
         {!loading && !error && filteredDevices.length > 0 && (
-          <div className="devices-grid">
-            {filteredDevices.map((device) => (
-              <div
-                key={device.id}
-                className="device-card"
-                // más adelante si haces detalle:
-                // onClick={() => navigate(`/device/${device.id}`)}
+          <div className="ed-device-list">
+            {filteredDevices.map((d) => (
+              <article
+                key={d.id}
+                className="ed-device-card"
+                onClick={() => {
+                  sessionStorage.setItem(
+                    "selectedDevice",
+                    JSON.stringify(d)
+                  );
+                  navigate(`/devices/${d.id}`);
+                }}
+                style={{ cursor: "pointer" }}
               >
-                {/* Imagen */}
-                <div className="device-card-img">
-                  <svg viewBox="0 0 400 220" className="device-svg">
-                    <g opacity="0.35">
-                      <path
-                        transform="translate(-20, -20)"
-                        d="M190 40c6-12 24-12 30 0l12 24c6 12-3 27-17 27h-20c-14 0-23-15-17-27l12-24z"
-                        fill="#413f43ff"
-                      />
-                      <circle cx="100" cy="135" r="30" fill="#413f43ff" />
-                      <rect
-                        x="245"
-                        y="100"
-                        width="60"
-                        height="60"
-                        rx="12"
-                        fill="#413f43ff"
-                      />
-                    </g>
-                  </svg>
+                <div className="ed-card-media">
+                  {d.photoUrl ? (
+                    <img
+                      src={d.photoUrl}
+                      alt={d.model}
+                      className="ed-card-img"
+                    />
+                  ) : (
+                    <svg
+                      viewBox="0 0 400 220"
+                      className="ed-card-placeholder"
+                    >
+                      <g opacity="0.35">
+                        <rect x="50" y="40" width="300" height="150" fill="#bdb4c8" />
+                      </g>
+                    </svg>
+                  )}
                 </div>
 
-                {/* Info */}
-                <div className="device-card-info">
-                  <div className="device-info-row">
-                    <span className="device-label">Modelo:</span>
-                    <span className="device-value">{device.model}</span>
-                  </div>
-                  <div className="device-info-row">
-                    <span className="device-label">Proveedor:</span>
-                    <span className="device-value">{device.provider}</span>
-                  </div>
-                  <div className="device-info-row">
-                    <span className="device-label">Nombre:</span>
-                    <span className="device-value">{device.user}</span>
-                  </div>
-                  <div className="device-info-row">
-                    <span className="device-label">Hora de entrada:</span>
-                    <span className="device-value">{device.entryTime}</span>
-                  </div>
-                  <div className="device-info-row">
-                    <span className="device-label">Hora de salida:</span>
-                    <span className="device-value">{device.exitTime}</span>
+                <div className="ed-card-content">
+                  <div className="ed-info-grid">
+                    <div className="ed-info-col">
+                      <div className="ed-mini-card ed-mini-card--primary">
+                        <span className="ed-mini-label">Modelo:</span>
+                        <span className="ed-mini-value">{d.model}</span>
+                      </div>
+
+                      <div className="ed-tags-column">
+                        <button className="ed-tag">
+                          {d.kind === "medical"
+                            ? "Dispositivo biomédico"
+                            : "Computador"}
+                        </button>
+
+                        {d.kind === "computer" && (
+                          <button className="ed-tag">
+                            {d.isFrequent
+                              ? "Computador frecuente"
+                              : "Computador no frecuente"}
+                          </button>
+                        )}
+
+                        {d.serial && (
+                          <button className="ed-tag">Serial: {d.serial}</button>
+                        )}
+
+                        {d.color && (
+                          <button className="ed-tag">Color: {d.color}</button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="ed-info-col">
+                      <div className="ed-mini-card">
+                        <span className="ed-mini-label">Proveedor:</span>
+                        <span className="ed-mini-value">{d.brand}</span>
+                      </div>
+
+                      <div className="ed-mini-card">
+                        <span className="ed-mini-label">Hora de entrada:</span>
+                        <span className="ed-mini-value">{d.entryTime}</span>
+                      </div>
+                    </div>
+
+                    <div className="ed-info-col">
+                      <div className="ed-mini-card">
+                        <span className="ed-mini-label">Nombre:</span>
+                        <span className="ed-mini-value">{d.userName}</span>
+                      </div>
+
+                      <div className="ed-mini-card">
+                        <span className="ed-mini-label">Hora de salida:</span>
+                        <span className="ed-mini-value">{d.exitTime}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}

@@ -2,14 +2,12 @@ import React, { useRef, useState } from "react";
 import "./MedicalDevicesCheckin.css";
 
 export default function MedicalDeviceCheckin() {
-  const [segment, setSegment] = useState<0 | 1>(0); // Externo / Biomédico (solo visual)
-
   // === CAMPOS QUE EL BACKEND ESPERA ===
-  const [brand, setBrand] = useState("");        // brand
-  const [model, setModel] = useState("");        // model
-  const [serial, setSerial] = useState("");      // serial
-  const [ownerName, setOwnerName] = useState(""); // ownerName
-  const [ownerId, setOwnerId] = useState("");     // ownerId
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [serial, setSerial] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [ownerId, setOwnerId] = useState("");
 
   // === CAMPOS EXTRA (solo UI) ===
   const [provider, setProvider] = useState("");
@@ -41,8 +39,6 @@ export default function MedicalDeviceCheckin() {
     }
 
     const form = new FormData();
-
-    // 👇 ESTOS NOMBRES DEBEN COINCIDIR CON MED_DEVICE_REQUEST_SCHEMA
     form.append("brand", brand.trim());
     form.append("model", model.trim());
     form.append("ownerName", ownerName.trim());
@@ -50,10 +46,9 @@ export default function MedicalDeviceCheckin() {
     form.append("serial", serial.trim());
     form.append("photo", file);
 
-    // 👇 Estos son opcionales, el schema actual los ignora
+    // Extras opcionales
     form.append("provider", provider.trim());
     form.append("descriptions", descriptions.trim());
-    form.append("category", segment === 0 ? "externo" : "biomedico");
 
     try {
       const res = await fetch("/api/medicaldevices/checkin", {
@@ -71,7 +66,6 @@ export default function MedicalDeviceCheckin() {
         }
         setError(msg);
       } else {
-        // limpiar formulario
         setBrand("");
         setModel("");
         setSerial("");
@@ -81,7 +75,7 @@ export default function MedicalDeviceCheckin() {
         setDescriptions("");
         setFile(null);
         setPreview(null);
-        alert("Dispositivo guardado con éxito.");
+        alert("Dispositivo biomédico guardado con éxito.");
       }
     } catch {
       setError("Error de conexión con el servidor.");
@@ -96,49 +90,7 @@ export default function MedicalDeviceCheckin() {
         <div className="md3-card-grid">
           {/* Columna izquierda */}
           <section className="md3-column-left">
-            <h2 className="md3-title">Externo / Biomédico</h2>
-            <p className="md3-subtitle">Seleccione una opción</p>
-
-            {/* Segmentado visual */}
-            <div className="md3-segment">
-              <button
-                type="button"
-                onClick={() => setSegment(0)}
-                className={
-                  "md3-segment-button" +
-                  (segment === 0 ? " md3-segment-button--active" : "")
-                }
-              >
-                <span
-                  className={
-                    "md3-segment-icon" +
-                    (segment === 0 ? " md3-segment-icon--ok" : "")
-                  }
-                >
-                  ✓
-                </span>
-                Externo
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSegment(1)}
-                className={
-                  "md3-segment-button" +
-                  (segment === 1 ? " md3-segment-button--active" : "")
-                }
-              >
-                <span
-                  className={
-                    "md3-segment-icon" +
-                    (segment === 1 ? " md3-segment-icon--error" : "")
-                  }
-                >
-                  ✕
-                </span>
-                Biomédico
-              </button>
-            </div>
+            <h2 className="md3-title">Dispositivos biomédicos</h2>
 
             {/* Campos */}
             <div className="md3-fields">
@@ -225,15 +177,13 @@ export default function MedicalDeviceCheckin() {
 
               {/* Descripciones */}
               <div className="md3-field">
-                <label className="md3-field-label">
-                  Ingrese descripciones del artículo separadas por comas
-                </label>
+                <label className="md3-field-label">Descripciones del artículo</label>
                 <div className="md3-textfield md3-textfield--textarea">
                   <textarea
                     rows={4}
                     value={descriptions}
                     onChange={(e) => setDescriptions(e.target.value)}
-                    placeholder="Escriba una o varias descripciones aquí"
+                    placeholder="Escriba descripciones aquí"
                     className="md3-textfield-input md3-textfield-textarea"
                   />
                 </div>
@@ -243,7 +193,7 @@ export default function MedicalDeviceCheckin() {
             </div>
           </section>
 
-          {/* Columna derecha: imagen + botón alineado */}
+          {/* Columna derecha: imagen */}
           <section className="md3-column-right">
             <p className="md3-title">Subir Imagen</p>
 
@@ -274,9 +224,7 @@ export default function MedicalDeviceCheckin() {
                 </div>
               )}
 
-              {preview && (
-                <img src={preview} className="md3-dropper-preview" />
-              )}
+              {preview && <img src={preview} className="md3-dropper-preview" />}
 
               <input
                 ref={inputRef}
@@ -286,30 +234,27 @@ export default function MedicalDeviceCheckin() {
                 onChange={onFileChange}
               />
             </div>
-
-          
           </section>
         </div>
 
-          {/* Botón alineado con el dropper */}
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "16px",
-              }}
-            >
-              <button
-                type="submit"
-                disabled={submitting}
-                className="md3-button md3-button--filled"
-              >
-                {submitting ? "Guardando…" : "Dar salida"}
-              </button>
-            </div>
+        {/* Botón */}
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "16px",
+          }}
+        >
+          <button
+            type="submit"
+            disabled={submitting}
+            className="md3-button md3-button--filled"
+          >
+            {submitting ? "Guardando…" : "Ingresar Dispositivo Biomédico"}
+          </button>
+        </div>
       </form>
-
     </main>
   );
 }

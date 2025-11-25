@@ -1,91 +1,142 @@
 import { useEffect, useState } from "react";
+import { QRCodeSVG } from "qrcode.react"; // ✅ QR dinámicos
 import "./frequentComputers.css";
 
-type computerItem = {
+type FrequentComputer = {
   id: string;
-  name: string;
-  description: string;
+  brand: string;
+  model: string;
+  color: string | null;
+  ownerName: string;
+  ownerId: string;
+  photoURL: string | null;
+  checkinURL: string;
+  checkoutURL: string;
 };
 
 export default function FrequentComputers() {
-  const [computers, setcomputers] = useState<computerItem[]>([]);
+  const [computers, setComputers] = useState<FrequentComputer[]>([]);
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<FrequentComputer | null>(null);
+
+  const normalize = (text: string) =>
+    text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
   useEffect(() => {
-    setcomputers([
-      { id: "1", name: "User1", description: "Supporting line text lorem ipsum dolor sit amet." },
-      { id: "2", name: "User2", description: "Supporting line text lorem ipsum dolor sit amet." },
-      { id: "3", name: "User3", description: "Supporting line text lorem ipsum dolor sit amet." },
-      { id: "4", name: "User4", description: "Supporting line text lorem ipsum dolor sit amet." },
-    ]);
+    async function load() {
+      try {
+        const res = await fetch("/api/computers/frequent");
+        if (!res.ok) throw new Error("Error al cargar frecuentes");
+
+        const raw = await res.json();
+        console.log("Frequent -> ", raw);
+
+        const mapped: FrequentComputer[] = raw.map((item: any) => {
+          const d = item.device ?? {};
+
+          return {
+            id: d.id,
+            brand: d.brand ?? "Sin marca",
+            model: d.model ?? "Sin modelo",
+            color: d.color ?? null,
+            ownerName: d.owner?.name ?? "Usuario desconocido",
+            ownerId: d.owner?.id ?? "—",
+            photoURL: d.photoURL ?? null,
+            checkinURL: item.checkinURL,
+            checkoutURL: item.checkoutURL,
+          };
+        });
+
+        setComputers(mapped);
+        setSelected(mapped[0] ?? null); // ✅ Seleccionar primero por defecto
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    load();
   }, []);
 
-  const filtered = computers.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
+  const filtered = computers.filter((c) =>
+    normalize(
+      `${c.ownerName} ${c.brand} ${c.model} ${c.color ?? ""}`
+    ).includes(normalize(search))
   );
 
   return (
     <main className="md3-page">
-
-      {/* CARD PRINCIPAL */}
       <section className="md3-card fd-card">
 
         <h1 className="fd-title">Dispositivos frecuentes</h1>
 
-        {/* BUSCADOR */}
+        {/* Buscador */}
         <div className="fd-search-row">
-          <div className="fd-search-box">
-            <span className="material-symbols-outlined fd-search-icon"></span>
+          <div className="fc-search-box">
             <input
               className="fd-search-input"
               placeholder="Buscar…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            <button className="fc-icon-button">🔍</button>
           </div>
         </div>
 
-        {/* CONTENIDO EN 2 COLUMNAS */}
-        <div className="fd-grid">
+        {/* Contenedor principal */}
+        <div className="fc-main-grid">
 
-          {/* TABLA IZQUIERDA */}
-          <div className="fd-table-wrapper">
-            <table className="fd-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Lista de usuarios */}
+          <div className="fc-list">
+            {filtered.map((c) => (
+              <div
+                key={c.id}
+                className="fc-item"
+                onClick={() => setSelected(c)}
+                style={{
+                  cursor: "pointer",
+                  background: selected?.id === c.id ? "#ebe4ff" : "",
+                  borderColor: selected?.id === c.id ? "#b9a5ff" : "",
+                }}
+              >
+                <p className="fc-item-name">{c.ownerName}</p>
+                <p className="fc-item-desc">
+                  {c.brand} {c.model} {c.color ? `(${c.color})` : ""}
+                </p>
+              </div>
+            ))}
           </div>
 
-          {/* QR DERECHA */}
-          <div className="fd-qrs">
-            <div className="fd-qr-block">
-              <p className="fd-qr-title">QR ENTRADA</p>
-              <img src="/qr-entry.png" className="fd-qr-img" />
-            </div>
+          {/* QRs dinámicos */}
+          {selected && (
+            <div className="fc-qrs">
 
-            <div className="fd-qr-block">
-              <p className="fd-qr-title">QR SALIDA</p>
-              <img src="/qr-exit.png" className="fd-qr-img" />
+              <div className="fc-qr-block">
+                <p className="fc-qr-title">QR ENTRADA</p>
+
+                <div style={{ background: "#fff", padding: "12px", borderRadius: "12px" }}>
+                  <QRCodeSVG
+                    value={selected.checkinURL}
+                    size={180}
+                  />
+                </div>
+              </div>
+
+              <div className="fc-qr-block">
+                <p className="fc-qr-title">QR SALIDA</p>
+
+                <div style={{ background: "#fff", padding: "12px", borderRadius: "12px" }}>
+                  <QRCodeSVG
+                    value={selected.checkoutURL}
+                    size={180}
+                  />
+                </div>
+              </div>
+
             </div>
-          </div>
+          )}
 
         </div>
-
       </section>
-
     </main>
   );
 }
- 

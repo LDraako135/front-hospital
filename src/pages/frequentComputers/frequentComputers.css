@@ -1,8 +1,8 @@
-/* Estructura general MD3 */
+/* Layout general MD3 */
 .md3-page {
   font-family: "Roboto", system-ui;
   padding: 20px;
-  background: var(--md-sys-color-surface);
+  background: var(--md-sys-color-surface, #f4f2fa);
   display: flex;
   justify-content: center;
 }
@@ -11,30 +11,40 @@
 .md3-card.fd-card {
   width: 100%;
   max-width: 880px;
-  background: var(--md-sys-color-surface-container);
+  background: var(--md-sys-color-surface-container, #ffffff);
   border-radius: 24px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant, #e2def3);
+  padding: 28px;
+  box-shadow: 0 4px 12px rgba(40, 20, 80, 0.08);
 }
 
 /* Título */
 .fd-title {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 22px;
+  color: #3c2e5a;
 }
 
 /* Buscador */
 .fd-search-row {
-  margin-bottom: 22px;
+  margin-bottom: 28px;
 }
 
-.fd-search-box {
+.fc-search-box {
   display: flex;
   align-items: center;
-  background: #efe7ff;
-  padding: 10px 16px;
-  border-radius: 16px;
+  background: #eee8ff;
+  padding: 10px 14px;
+  border-radius: 22px;
+  gap: 8px;
+  border: 1px solid #ddd3ff;
+  transition: 0.2s ease;
+}
+
+.fc-search-box:focus-within {
+  background: #f5f1ff;
+  box-shadow: 0 0 0 2px #c7b4ff;
 }
 
 .fd-search-input {
@@ -42,75 +52,99 @@
   border: none;
   background: transparent;
   font-size: 15px;
-  margin-left: 8px;
   outline: none;
 }
 
+.fc-icon-button {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  color: #6c5a9b;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.fc-icon-button:hover {
+  opacity: 1;
+}
+
 /* Grid principal */
-.fd-grid {
+.fc-main-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 32px;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 36px;
 }
 
-/* TABLA */
-.fd-table-wrapper {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid #ddd;
-  background: white;
+/* Lista de dispositivos */
+.fc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.fd-table {
-  width: 100%;
-  border-collapse: collapse;
+.fc-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e0f5;
+  background: #fbfaff;
+  transition: 0.18s ease;
+}
+
+.fc-item:hover {
+  background: #f3f0ff;
+  border-color: #cfc3ff;
+}
+
+.fc-item-name {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #3a2d55;
+}
+
+.fc-item-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #6a6580;
+}
+
+.fc-empty {
   font-size: 14px;
-}
-
-.fd-table th {
-  background: #f4ecff;
-  text-align: left;
-  padding: 12px;
-  font-weight: 700;
-}
-
-.fd-table td {
-  padding: 12px;
-  border-top: 1px solid #e2dced;
+  color: #777;
 }
 
 /* QRs */
-.fd-qrs {
+.fc-qrs {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
   gap: 28px;
+  align-items: flex-start;
 }
 
-.fd-qr-block {
+.fc-qr-block {
   text-align: center;
 }
 
-.fd-qr-title {
-  margin-bottom: 8px;
+.fc-qr-title {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #4e3a78;
 }
 
-.fd-qr-img {
+.fc-qr-block svg {
   width: 180px;
   height: 180px;
 }
 
 /* Responsive */
 @media (max-width: 820px) {
-  .fd-grid {
+  .fc-main-grid {
     grid-template-columns: 1fr;
+    row-gap: 28px;
   }
 
-  .fd-qrs {
-    flex-direction: row;
+  .fc-qrs {
     justify-content: center;
   }
 }

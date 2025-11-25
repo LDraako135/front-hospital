@@ -315,7 +315,7 @@ export default function ComputersCheckin() {
             disabled={submitting}
             className="md3-button md3-button--filled"
           >
-            {submitting ? "Guardando…" : "Dar Saliada"}
+            {submitting ? "Guardando…" : "Ingresar Computador"}
           </button>
         </div>
       </form>
