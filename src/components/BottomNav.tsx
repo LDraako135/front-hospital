@@ -38,23 +38,20 @@ export default function BottomNav() {
 
   async function handleLogout() {
     try {
-      // Call logout endpoint
       await fetch("/auth/sign-out", {
         method: "POST",
         credentials: "include",
       });
-      // Redirect to login
       navigate("/login");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
-      // Redirect anyway
       navigate("/login");
     }
   }
 
   return (
     <>
-      {/* SUBMENÚ */}
+      {/* SUBMENÚ REGISTRAR */}
       {showRegisterMenu && (
         <div className="md3-bottom-nav-register-menu">
           <button
@@ -83,127 +80,136 @@ export default function BottomNav() {
         </div>
       )}
 
+      {/* ESPACIO PARA QUE EL NAV NO TAPE EL CONTENIDO */}
+      <div className="md3-bottom-nav-safe-space" aria-hidden="true" />
+
+      {/* NAV INFERIOR */}
       <nav className="md3-bottom-nav-wrapper">
         <div className="md3-bottom-nav">
+          {/* Acciones principales */}
+          <div className="md3-bottom-nav-main">
+            {/* HISTORY */}
+            <button
+              type="button"
+              className={
+                "md3-bottom-nav-action" +
+                (active === "history"
+                  ? " md3-bottom-nav-action--active"
+                  : "")
+              }
+              onClick={() => navigate("/devices/entered")}
+            >
+              <span className="md3-bottom-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2a7 7 0 017 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 017-7z"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <circle
+                    cx="12"
+                    cy="9"
+                    r="2.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                </svg>
+              </span>
+              <span className="md3-bottom-nav-label">History</span>
+            </button>
 
-          {/* HISTORY */}
+            {/* DASHBOARD */}
+            <button
+              type="button"
+              className={
+                "md3-bottom-nav-action" +
+                (active === "dashboard"
+                  ? " md3-bottom-nav-action--active"
+                  : "")
+              }
+              onClick={() => navigate("/computers/frequent")}
+            >
+              <span className="md3-bottom-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="M12 6v6l4 2"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="md3-bottom-nav-label">Dashboard</span>
+            </button>
+
+            {/* REGISTER */}
+            <button
+              type="button"
+              onClick={toggleRegisterMenu}
+              className={
+                "md3-bottom-nav-action" +
+                (active === "register"
+                  ? " md3-bottom-nav-action--active"
+                  : "")
+              }
+            >
+              <span className="md3-bottom-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="7"
+                    r="4"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="M4 20a8 8 0 0116 0"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="md3-bottom-nav-label">Registrar</span>
+            </button>
+          </div>
+
+          {/* Logout discreto, solo iconito */}
           <button
             type="button"
-            className={
-              "md3-bottom-nav-action" +
-              (active === "history" ? " md3-bottom-nav-action--active" : "")
-            }
-            onClick={() => navigate("/devices/entered")}
-          >
-            <span className="md3-bottom-nav-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 2a7 7 0 017 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 017-7z"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                />
-                <circle
-                  cx="12"
-                  cy="9"
-                  r="2.5"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                />
-              </svg>
-            </span>
-            <span className="md3-bottom-nav-label">History</span>
-          </button>
-
-          {/* DASHBOARD */}
-          <button
-            type="button"
-            className={
-              "md3-bottom-nav-action" +
-              (active === "dashboard" ? " md3-bottom-nav-action--active" : "")
-            }
-            onClick={() => navigate("/computers/frequent")}
-          >
-            <span className="md3-bottom-nav-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="9"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                />
-                <path
-                  d="M12 6v6l4 2"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="md3-bottom-nav-label">Dashboard</span>
-          </button>
-
-          {/* REGISTER */}
-          <button
-            type="button"
-            onClick={toggleRegisterMenu}
-            className={
-              "md3-bottom-nav-action" +
-              (active === "register" ? " md3-bottom-nav-action--active" : "")
-            }
-          >
-            <span className="md3-bottom-nav-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <circle
-                  cx="12"
-                  cy="7"
-                  r="4"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                />
-                <path
-                  d="M4 20a8 8 0 0116 0"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="md3-bottom-nav-label">Registrar</span>
-          </button>
-
-          {/* LOGOUT */}
-          <button
-            type="button"
-            className="md3-bottom-nav-action"
+            className="md3-bottom-nav-logout-icon-btn"
             onClick={handleLogout}
+            aria-label="Cerrar sesión"
           >
-            <span className="md3-bottom-nav-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M16 17l5-5-5-5"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M21 12H9"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="md3-bottom-nav-label">Salir</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+              />
+              <path
+                d="M16 17l5-5-5-5"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M21 12H9"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+              />
+            </svg>
           </button>
-
         </div>
       </nav>
     </>

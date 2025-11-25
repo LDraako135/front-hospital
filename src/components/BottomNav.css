@@ -1,3 +1,8 @@
+/* espacio para que el nav no tape contenido */
+.md3-bottom-nav-safe-space {
+  height: 92px;
+}
+
 /* === NAV FIJO ABAJO === */
 .md3-bottom-nav-wrapper {
   position: fixed;
@@ -13,18 +18,29 @@
 .md3-bottom-nav {
   pointer-events: auto;
   display: flex;
-  justify-content: space-around;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 
-  padding: 10px 18px;
-  background: #ffffff;
-  border-radius: 30px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+
+  border-radius: 26px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.18);
 }
 
-/* === BOTONES DEL NAV === */
+/* grupo de tabs centrales */
+.md3-bottom-nav-main {
+  display: flex;
+  flex: 1;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* === BOTONES PRINCIPALES === */
 .md3-bottom-nav-action {
-  position: relative; /* por si más adelante quieres anclar algo a cada botón */
   border: none;
   background: transparent;
   cursor: pointer;
@@ -32,32 +48,59 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  min-width: 70px;
 }
 
-/* Icono: gris por defecto */
 .md3-bottom-nav-icon {
   margin-bottom: 4px;
-  color: #6b6870; /* <- currentColor de los SVG */
+  color: #6b6870;
 }
 
-/* Label por defecto */
 .md3-bottom-nav-label {
   font-size: 12px;
   color: #6b6870;
 }
 
-/* Activo: icono y texto morado */
 .md3-bottom-nav-action--active .md3-bottom-nav-icon,
 .md3-bottom-nav-action--active .md3-bottom-nav-label {
   color: #6F54B7;
-  font-weight: 700;
+  font-weight: 600;
 }
 
-/* === SUBMENÚ ENCIMA DEL NAV (con animación) === */
+/* === BOTÓN LOGOUT: SOLO ICONO, DISCRETO === */
+.md3-bottom-nav-logout-icon-btn {
+  border: none;
+  padding: 6px;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(148, 163, 184, 0.12);
+  color: #6b7280;
+
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.12s ease-out, color 0.2s;
+}
+
+.md3-bottom-nav-logout-icon-btn:hover {
+  background: rgba(248, 113, 113, 0.12);
+  color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.md3-bottom-nav-logout-icon-btn:active {
+  background: rgba(248, 113, 113, 0.18);
+  transform: scale(0.96);
+}
+
+/* === SUBMENÚ REGISTRAR === */
 .md3-bottom-nav-register-menu {
-  position: fixed;           /* <- ahora va fijo junto al nav */
-  bottom: 100px;             /* separación respecto al borde inferior */
-  left: 60%;
+  position: fixed;
+  bottom: 104px;
+  left: 50%;
   transform: translateX(-50%);
 
   display: flex;
@@ -65,13 +108,10 @@
   gap: 8px;
 
   z-index: 10000;
-
-  /* animación de entrada */
   animation: md3-register-menu-in 0.18s ease-out;
   transform-origin: bottom center;
 }
 
-/* Opciones del submenú */
 .md3-bottom-nav-register-option {
   border: none;
   padding: 10px 16px;
@@ -86,17 +126,7 @@
   transition: background-color 0.2s, transform 0.15s ease-out;
   white-space: nowrap;
 
-  /* pequeña animación de pop */
   animation: md3-register-option-in 0.22s ease-out;
-}
-
-/* delay suave por opción */
-.md3-bottom-nav-register-option:nth-child(1) {
-  animation-delay: 0.03s;
-}
-
-.md3-bottom-nav-register-option:nth-child(2) {
-  animation-delay: 0.06s;
 }
 
 .md3-bottom-nav-register-option:hover {
@@ -111,16 +141,14 @@
 
 .md3-bottom-nav-register-option--active {
   background-color: #e8ddff;
-  color: #000000;
+  color: #000;
 }
 
-/* 🔑 KEYFRAMES */
-
-/* menú: aparece con fade + slide up + leve scale */
+/* animaciones */
 @keyframes md3-register-menu-in {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(8px) scale(0.98);
+    transform: translateX(-50%) translateY(10px) scale(0.95);
   }
   to {
     opacity: 1;
@@ -128,11 +156,10 @@
   }
 }
 
-/* opción: pequeño pop-in */
 @keyframes md3-register-option-in {
   from {
     opacity: 0;
-    transform: translateY(6px) scale(0.96);
+    transform: translateY(7px) scale(0.95);
   }
   to {
     opacity: 1;
