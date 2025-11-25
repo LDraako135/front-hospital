@@ -1,0 +1,178 @@
+/* --- Estilos Generales para la Página de Detalles --- */
+.md3-page {
+  font-family: "Roboto", system-ui;
+  padding: 20px;
+  background: #f4eaff;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- Tarjeta Principal --- */
+.md3-card.fd-card {
+  width: 100%;
+  max-width: 880px;
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid #e0d7f7;
+}
+
+/* --- Título de la Página --- */
+.fd-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+
+.volver-btn:hover {
+  background: #cfc1e5; /* Color más oscuro al pasar el ratón */
+  transform: translateY(-2px); /* Efecto de desplazamiento */
+}
+
+.volver-btn:focus {
+  outline: none; /* Elimina el borde de foco */
+}
+
+/* --- Contenedor de Información del Dispositivo --- */
+.device-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #ded7ef;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --- Imagen del Dispositivo --- */
+.device-card-img {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* SVG */
+.device-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Información del Dispositivo --- */
+.device-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Fila de Información */
+.device-info-row {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Etiquetas de la Información */
+.device-label {
+  font-weight: 600;
+  color: #6c45ff;
+  margin-bottom: 6px;
+}
+
+/* Valores de la Información */
+.device-value {
+  font-weight: 500;
+  color: #413f43;
+  font-size: 16px;
+}
+/* --- Botón de Dar salida --- */
+.dar-salida-btn {
+  background: #6c45ff; /* Color de fondo morado */
+  color: white; /* Texto blanco */
+  border: none;
+  padding: 12px 20px; /* Espaciado alrededor del texto */
+  border-radius: 24px; /* Bordes redondeados */
+  font-size: 14px; /* Tamaño de fuente pequeño */
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px; /* Separación superior */
+  transition: background-color 0.3s ease; /* Transición suave de color de fondo */
+}
+
+.dar-salida-btn:hover {
+  background: #5732d8; /* Color más oscuro cuando el usuario pasa el ratón */
+}
+
+.dar-salida-btn:focus {
+  outline: none; /* Elimina el borde de foco */
+}
+
+/* --- Botón de Volver --- */
+.volver-btn {
+  background: #f4e7ff; /* Color de fondo muy claro */
+  color: #6c45ff; /* Texto morado */
+  border: 1px solid #6c45ff; /* Borde morado */
+  padding: 12px 20px; /* Espaciado alrededor del texto */
+  border-radius: 24px; /* Bordes redondeados */
+  font-size: 14px; /* Tamaño de fuente pequeño */
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px; /* Separación superior */
+  transition: background-color 0.3s ease; /* Transición suave de color de fondo */
+}
+
+.volver-btn:hover {
+  background: #f1d9ff; /* Color más oscuro cuando el usuario pasa el ratón */
+}
+
+.volver-btn:focus {
+  outline: none; /* Elimina el borde de foco */
+}
+
+/* --- Contenedor de Botones --- */
+.device-info-row {
+  display: flex;
+  justify-content: space-between; /* Alinea los botones de manera horizontal */
+  gap: 10px; /* Espacio entre los botones */
+}
+
+.fd-filters {
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  max-height: 0; /* Inicialmente oculto */
+  overflow: hidden;
+  padding: 0;
+}
+
+.fd-filters.show {
+  max-height: 1000px; /* Ajusta según sea necesario */
+  padding: 10px;
+}
+
+.filter-toggle-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.filter-toggle-btn:hover {
+  background-color: #45a049;
+}
+
+
+.fd-filter {
+  margin-bottom: 10px;
+}
+
+

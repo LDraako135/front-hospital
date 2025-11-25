@@ -1,0 +1,296 @@
+/* === TIPOGRAFÍA GLOBAL MD3 === */
+.md3-page {
+  font-family: "Roboto Flex", "Roboto", system-ui, sans-serif;
+}
+
+/* === LAYOUT PRINCIPAL === */
+.md3-page {
+  min-height: 100vh;
+  background-color: var(--md-sys-color-surface);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .md3-page {
+    padding: 24px;
+  }
+}
+
+/* 
+/* === CARD PRINCIPAL === */
+.md3-card {
+  margin: 0 auto;
+  width: 100%;
+   max-width: 790px;
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 24px;
+}
+
+@media (min-width: 1024px) {
+  .md3-card {
+    padding: 24px 28px;
+  }
+}
+
+
+.md3-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 1024px) {
+  .md3-card-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+/* === COLUMNAS === */
+.md3-column-left {
+  padding-right: 0;
+}
+
+@media (min-width: 1024px) {
+  .md3-column-left {
+    padding-right: 24px;
+  }
+}
+
+.md3-column-right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === TITULOS === */
+.md3-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.md3-subtitle {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 4px 0 0 0;
+}
+
+/* === SEGMENTED BUTTON === */
+.md3-segment {
+  margin-top: 12px;
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid var(--md-sys-color-outline);
+  background-color: var(--md-sys-color-surface-container);
+  overflow: hidden;
+  white-space: nowrap; /* 👈 evita saltos de línea */
+}
+
+.md3-segment-button {
+  flex: 1;                 /* 👈 crece horizontalmente */
+  border: none;
+  background: transparent;
+  padding: 10px 24px;      /* 👈 altura constante */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 16px;         /* 👈 tamaño de texto normal */
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  min-width: 120px;        /* 👈 evita que se encoja demasiado */
+}
+
+.md3-segment-button + .md3-segment-button {
+  border-left: 1px solid var(--md-sys-color-outline);
+}
+
+.md3-segment-button--active {
+  background-color: #e9ddff;
+}
+
+.md3-segment-icon {
+  font-size: 14px;
+  color: transparent;
+}
+
+.md3-segment-icon--ok {
+  color: #1f7a1f;
+}
+
+.md3-segment-icon--error {
+  color: #b3261e;
+}
+
+
+/* === INPUTS === */
+.md3-fields {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.md3-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.md3-field-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+
+.md3-field-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .md3-field-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.md3-textfield {
+  background-color: #e5dfe7;
+  border-radius: 999px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.md3-textfield--textarea {
+  border-radius: 24px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.md3-textfield-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #000;
+}
+
+.md3-textfield-input::placeholder {
+  color: #a59dab;
+}
+
+.md3-textfield-textarea {
+  resize: none;
+}
+
+/* === DROPPER (agrandado y más visible) === */
+.md3-dropper {
+  position: relative;
+  margin-top: 12px;
+  height: 240px; /* más grande */
+  width: 100%;
+  max-width: 300px;
+  border-radius: 16px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background-color: #ebe6f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.md3-dropper-decor {
+  position: absolute;
+  inset: 0;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.md3-dropper-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.md3-dropper-preview {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.md3-dropper-input {
+  display: none;
+}
+
+/* === BOTÓN SUBMIT === */
+.md3-card-actions {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+
+
+.md3-button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.md3-button--filled {
+  background-color: #7b4ee2;
+  color: #fff;
+}
+
+/* === BOTTOM NAV === */
+.md3-bottom-nav-wrapper {
+  margin: 24px auto 0;
+  width: 100%;
+  max-width: 420px;
+}
+
+.md3-bottom-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: #f6f0fb;
+  border-radius: 40px;
+  padding: 4px;
+}
+
+.md3-bottom-nav-action {
+  border: none;
+  background: transparent;
+  border-radius: 32px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  font-size: 12px;
+  color: #8a8294;
+  cursor: pointer;
+}
+
+.md3-bottom-nav-action--active {
+  background-color: #e8ddff;
+  color: #000;
+}
+
+.md3-bottom-nav-label {
+  font-weight: 600;
+}

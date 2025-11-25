@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Route, Routes, Outlet, Navigate } from "react-router-dom";
+import ComputersCheckin from "./pages/computersChekin/computersChekin";
+import EnteredDevices from "./pages/enteredDevices/enteredDevices";
+import MedicalDevicesCheckin from "./pages/medicalDeviceChekin/medicalDeviceChekin";
+import BottomNav from "./components/BottomNav";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
+import NotFound from "./pages/NotFound";
+import DeviceDetail from "./pages/deviceDetail/deviceDetail";
+import FrequentComputers from "./pages/frequentComputers/frequentComputers";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function LayoutWithNav() {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Outlet />
+      <BottomNav />
     </>
-  )
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route element={<LayoutWithNav />}>
+          <Route path="/computers/checkin" element={<ComputersCheckin />} />
+          <Route path="/medical/checkin" element={<MedicalDevicesCheckin />} />
+          <Route path="/devices/entered" element={<EnteredDevices />} />
+          <Route path="/computers/frequent" element={<FrequentComputers />} />
+
+          <Route path="/device/:deviceId" element={<DeviceDetail />} /> {/* Agrega esta ruta */}
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
