@@ -1,0 +1,182 @@
+.md3-page {
+  font-family: "Roboto", system-ui;
+  padding: 20px;
+  background: #f4eaff;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- Tarjeta Principal --- */
+.md3-card.fd-card {
+  width: 100%;
+  max-width: 880px;
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid #e0d7f7;
+}
+
+/* --- Título de la Página --- */
+.fd-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.volver-btn:hover {
+  background: #cfc1e5;
+  transform: translateY(-2px);
+}
+
+.volver-btn:focus {
+  outline: none;
+}
+
+/* --- Contenedor de Información del Dispositivo --- */
+.device-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #ded7ef;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --- Imagen del Dispositivo --- */
+.device-card-img {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* evita que la imagen se salga */
+}
+
+.device-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ajusta la imagen y evita deformación */
+  border-radius: 12px;
+}
+
+/* SVG */
+.device-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Información del Dispositivo --- */
+.device-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Fila de Información */
+.device-info-row {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Etiquetas de la Información */
+.device-label {
+  font-weight: 600;
+  color: #6c45ff;
+  margin-bottom: 6px;
+}
+
+/* Valores de la Información */
+.device-value {
+  font-weight: 500;
+  color: #413f43;
+  font-size: 16px;
+}
+
+/* --- Botón de Dar salida --- */
+.dar-salida-btn {
+  background: #6c45ff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.dar-salida-btn:hover {
+  background: #5732d8;
+}
+
+.dar-salida-btn:focus {
+  outline: none;
+}
+
+/* --- Botón de Volver --- */
+.volver-btn {
+  background: #f4e7ff;
+  color: #6c45ff;
+  border: 1px solid #6c45ff;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.volver-btn:hover {
+  background: #f1d9ff;
+}
+
+.volver-btn:focus {
+  outline: none;
+}
+
+/* --- Contenedor de Botones --- */
+.device-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fd-filters {
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.fd-filters.show {
+  max-height: 1000px;
+  padding: 10px;
+}
+
+.filter-toggle-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.filter-toggle-btn:hover {
+  background-color: #45a049;
+}
+
+.fd-filter {
+  margin-bottom: 10px;
+}

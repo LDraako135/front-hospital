@@ -1,0 +1,150 @@
+/* Layout general MD3 */
+.md3-page {
+  font-family: "Roboto", system-ui;
+  padding: 20px;
+  background: var(--md-sys-color-surface, #f4f2fa);
+  display: flex;
+  justify-content: center;
+}
+
+/* Tarjeta principal */
+.md3-card.fd-card {
+  width: 100%;
+  max-width: 880px;
+  background: var(--md-sys-color-surface-container, #ffffff);
+  border-radius: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant, #e2def3);
+  padding: 28px;
+  box-shadow: 0 4px 12px rgba(40, 20, 80, 0.08);
+}
+
+/* Título */
+.fd-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 22px;
+  color: #3c2e5a;
+}
+
+/* Buscador */
+.fd-search-row {
+  margin-bottom: 28px;
+}
+
+.fc-search-box {
+  display: flex;
+  align-items: center;
+  background: #eee8ff;
+  padding: 10px 14px;
+  border-radius: 22px;
+  gap: 8px;
+  border: 1px solid #ddd3ff;
+  transition: 0.2s ease;
+}
+
+.fc-search-box:focus-within {
+  background: #f5f1ff;
+  box-shadow: 0 0 0 2px #c7b4ff;
+}
+
+.fd-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  outline: none;
+}
+
+.fc-icon-button {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  color: #6c5a9b;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.fc-icon-button:hover {
+  opacity: 1;
+}
+
+/* Grid principal */
+.fc-main-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 36px;
+}
+
+/* Lista de dispositivos */
+.fc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fc-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e0f5;
+  background: #fbfaff;
+  transition: 0.18s ease;
+}
+
+.fc-item:hover {
+  background: #f3f0ff;
+  border-color: #cfc3ff;
+}
+
+.fc-item-name {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #3a2d55;
+}
+
+.fc-item-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #6a6580;
+}
+
+.fc-empty {
+  font-size: 14px;
+  color: #777;
+}
+
+/* QRs */
+.fc-qrs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.fc-qr-block {
+  text-align: center;
+}
+
+.fc-qr-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #4e3a78;
+}
+
+.fc-qr-block svg {
+  width: 180px;
+  height: 180px;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .fc-main-grid {
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+  }
+
+  .fc-qrs {
+    justify-content: center;
+  }
+}
