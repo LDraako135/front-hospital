@@ -1,182 +1,216 @@
-.md3-page {
-  font-family: "Roboto", system-ui;
-  padding: 20px;
-  background: #f4eaff;
+.detail-page {
+  font-family: "Roboto", sans-serif;
+  background: #f7f2fb;
+  padding: 30px;
   display: flex;
   justify-content: center;
 }
 
-/* --- Tarjeta Principal --- */
-.md3-card.fd-card {
+.detail-card {
   width: 100%;
-  max-width: 880px;
+  max-width: 850px;
   background: white;
-  border-radius: 24px;
-  padding: 24px;
-  border: 1px solid #e0d7f7;
-}
-
-/* --- Título de la Página --- */
-.fd-title {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.volver-btn:hover {
-  background: #cfc1e5;
-  transform: translateY(-2px);
-}
-
-.volver-btn:focus {
-  outline: none;
-}
-
-/* --- Contenedor de Información del Dispositivo --- */
-.device-card {
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #ded7ef;
+  border-radius: 22px;
+  border: 1px solid #e5dcf1;
   padding: 20px;
+}
+
+/* HEADER */
+.detail-header {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4px;
+}
+.detail-title {
+  font-size: 22px;
+  font-weight: 600;
+}
+.detail-model {
+  font-size: 15px;
+  opacity: 0.8;
 }
 
-/* --- Imagen del Dispositivo --- */
-.device-card-img {
-  width: 150px;
-  height: 150px;
-  margin: 0 auto;
+/* IMAGEN */
+.detail-image-box {
+  width: 100%;
+  height: 240px;
+  background: #f3ecf9;
+  border-radius: 16px;
+  margin: 20px 0;
   display: flex;
-  justify-content: center;
   align-items: center;
-  overflow: hidden; /* evita que la imagen se salga */
+  justify-content: center;
 }
-
-.device-detail-img {
-  width: 100%;
+.detail-image {
+  max-width: 100%;
   height: 100%;
-  object-fit: cover; /* ajusta la imagen y evita deformación */
-  border-radius: 12px;
+  object-fit: contain;
+  border-radius: 16px;
+}
+.detail-placeholder {
+  width: 140px;
+  height: 140px;
 }
 
-/* SVG */
-.device-svg {
-  width: 100%;
-  height: 100%;
+/* INFO */
+.detail-info-section {
+  padding: 20px 0;
 }
-
-/* --- Información del Dispositivo --- */
-.device-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-
-/* Fila de Información */
-.device-info-row {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Etiquetas de la Información */
-.device-label {
-  font-weight: 600;
-  color: #6c45ff;
-  margin-bottom: 6px;
-}
-
-/* Valores de la Información */
-.device-value {
-  font-weight: 500;
-  color: #413f43;
+.detail-section-title {
   font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.detail-user {
+  font-size: 15px;
+  margin: 0;
+}
+.detail-user-id {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 15px;
 }
 
-/* --- Botón de Dar salida --- */
-.dar-salida-btn {
-  background: #6c45ff;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
-}
-
-.dar-salida-btn:hover {
-  background: #5732d8;
-}
-
-.dar-salida-btn:focus {
-  outline: none;
-}
-
-/* --- Botón de Volver --- */
-.volver-btn {
-  background: #f4e7ff;
-  color: #6c45ff;
-  border: 1px solid #6c45ff;
-  padding: 12px 20px;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.volver-btn:hover {
-  background: #f1d9ff;
-}
-
-.volver-btn:focus {
-  outline: none;
-}
-
-/* --- Contenedor de Botones --- */
-.device-info-row {
+.detail-tags {
   display: flex;
-  justify-content: space-between;
   gap: 10px;
 }
-
-.fd-filters {
-  margin-bottom: 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-  max-height: 0;
-  overflow: hidden;
-  padding: 0;
-}
-
-.fd-filters.show {
-  max-height: 1000px;
-  padding: 10px;
-}
-
-.filter-toggle-btn {
-  background-color: #4caf50;
+.tag {
+  background: #744bce;
   color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* FREQUENT SECTION */
+.detail-frequent-box {
+  background: #f7f2fb;
+  padding: 15px;
+  border-radius: 16px;
+  border: 1px solid #e0d8ef;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.freq-title {
   font-size: 14px;
+  font-weight: 600;
+}
+.freq-btn {
+  background: #7a4be0;
+  border: none;
+  padding: 10px 16px;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.freq-img-box {
+  width: 80px;
+  height: 80px;
 }
 
-.filter-toggle-btn:hover {
-  background-color: #45a049;
+/* EXIT BUTTON */
+.exit-btn {
+  margin-top: 10px;
+  background: #744bce;
+  color: white;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  float: right;
+  cursor: pointer;
+}
+.exit-btn:hover {
+  background: #6037b5;
+}
+.detail-frequent-box {
+  background: #f7f2fb;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #e0d8ef;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
 }
 
-.fd-filter {
-  margin-bottom: 10px;
+.freq-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.freq-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4c3c8f;
+}
+
+.freq-text {
+  font-size: 13px;
+  color: #6b6285;
+  margin: 0;
+}
+
+.freq-btn {
+  align-self: flex-start;
+  background: #7b4ee2;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.freq-btn:hover {
+  background: #6840c4;
+}
+
+/* Columna de QRs */
+.freq-qr-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.freq-qr-block {
+  background: #fff;
+  border-radius: 14px;
+  padding: 8px 10px 12px;
+  box-shadow: 0 4px 10px rgba(57, 40, 120, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.freq-qr-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4c3c8f;
+}
+
+.freq-qr-inner {
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .detail-frequent-box {
+    grid-template-columns: 1fr;
+  }
+
+  .freq-qr-column {
+    flex-direction: row;
+    justify-content: center;
+  }
 }

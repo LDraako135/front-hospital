@@ -70,13 +70,27 @@ export default function EnteredDevices() {
           userId: md.owner?.id ?? null,
           color: null,
           serial: md.serial ?? null,
+
+          // Hora de entrada
           entryTime: new Date(
-            md.checkinAt ?? md.updatedAt ?? md.createdAt
+            md.checkinAt ?? md.updatedAt
           ).toLocaleTimeString("es-ES", {
             hour: "2-digit",
             minute: "2-digit",
           }),
-          exitTime: "—",
+
+          // 👇 Hora de salida: primero checkoutAt y si no, updatedAt
+          exitTime:
+            md.checkoutAt || md.updatedAt
+              ? new Date(md.checkoutAt ?? md.updatedAt).toLocaleTimeString(
+                  "es-ES",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )
+              : "—",
+
           photoUrl: md.photoURL ?? null,
           isFrequent: false,
         }));
@@ -90,13 +104,27 @@ export default function EnteredDevices() {
           userId: pc.owner?.id ?? null,
           color: pc.color ?? null,
           serial: null,
+
+          // Hora de entrada
           entryTime: new Date(
-            pc.checkinAt ?? pc.updatedAt ?? pc.createdAt
+            pc.checkinAt ?? pc.updatedAt
           ).toLocaleTimeString("es-ES", {
             hour: "2-digit",
             minute: "2-digit",
           }),
-          exitTime: "—",
+
+          // 👇 Hora de salida: primero checkoutAt y si no, updatedAt
+          exitTime:
+            pc.checkoutAt || pc.updatedAt
+              ? new Date(pc.checkoutAt ?? pc.updatedAt).toLocaleTimeString(
+                  "es-ES",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )
+              : "—",
+
           photoUrl: pc.photoURL ?? null,
           isFrequent: frequentIds.has(pc.id),
         }));
@@ -131,8 +159,9 @@ export default function EnteredDevices() {
         : "";
 
     const text = normalize(
-      `${d.brand} ${d.model} ${d.userName} ${d.userId ?? ""} ${d.serial ?? ""
-      } ${d.color ?? ""} ${frequentLabel}`
+      `${d.brand} ${d.model} ${d.userName} ${d.userId ?? ""} ${d.serial ?? ""} ${
+        d.color ?? ""
+      } ${frequentLabel}`
     );
 
     return text.includes(normalize(search));
@@ -216,7 +245,13 @@ export default function EnteredDevices() {
                       className="ed-card-placeholder"
                     >
                       <g opacity="0.35">
-                        <rect x="50" y="40" width="300" height="150" fill="#bdb4c8" />
+                        <rect
+                          x="50"
+                          y="40"
+                          width="300"
+                          height="150"
+                          fill="#bdb4c8"
+                        />
                       </g>
                     </svg>
                   )}
@@ -262,7 +297,7 @@ export default function EnteredDevices() {
                       </div>
 
                       <div className="ed-mini-card">
-                        <span className="ed-mini-label">Hora de entrada:</span>
+                        <span className="ed-mini-label">Hora entrada:</span>
                         <span className="ed-mini-value">{d.entryTime}</span>
                       </div>
                     </div>
@@ -274,7 +309,7 @@ export default function EnteredDevices() {
                       </div>
 
                       <div className="ed-mini-card">
-                        <span className="ed-mini-label">Hora de salida:</span>
+                        <span className="ed-mini-label">Hora salida:</span>
                         <span className="ed-mini-value">{d.exitTime}</span>
                       </div>
                     </div>

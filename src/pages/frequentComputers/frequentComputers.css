@@ -148,3 +148,47 @@
     justify-content: center;
   }
 }
+.fc-type-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.fc-type-toggle {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: #f3e9ff;
+}
+
+.fc-type-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #5b4a8b;
+}
+
+.fc-type-btn--active {
+  background: #fff;
+  box-shadow: 0 0 0 1px #c3b0ff;
+}
+
+.fc-create-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  background-color: #7b4ee2;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fc-empty-devices {
+  padding: 16px;
+}
