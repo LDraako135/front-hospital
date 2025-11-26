@@ -62,7 +62,7 @@ export default function Login() {
 
         <div className="auth-card-body">
           {/* Logo */}
-          <div className="auth-logo-box">Logo..</div>
+        
 
           {/* Usuario */}
           <label className="auth-label" htmlFor="usuario">

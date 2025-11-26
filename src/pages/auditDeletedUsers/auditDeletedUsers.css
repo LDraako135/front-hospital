@@ -1,0 +1,156 @@
+/* src/pages/auditDeletedUsers/auditDeletedUsers.css */
+
+.dua-page {
+  min-height: 100vh;
+  background-color: #020617;
+  color: #e5e7eb;
+  padding: 16px 12px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.dua-container {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.dua-header {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dua-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.dua-search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.dua-search-input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  padding: 8px 12px;
+  background-color: #020617;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.dua-search-input::placeholder {
+  color: #6b7280;
+}
+
+.dua-search-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.dua-btn {
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background-color: #111827;
+  color: #e5e7eb;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    transform 0.1s ease;
+}
+
+.dua-btn:hover {
+  transform: translateY(-1px);
+}
+
+.dua-btn-outline-primary {
+  border-color: #3b82f6;
+  color: #dbeafe;
+}
+
+.dua-btn-outline-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.dua-btn-outline-danger {
+  border-color: #ef4444;
+  color: #fee2e2;
+}
+
+.dua-btn-outline-danger:hover {
+  background-color: #7f1d1d;
+}
+
+.dua-table-section {
+  margin-top: 8px;
+}
+
+.dua-error-text {
+  color: #fecaca;
+  margin-bottom: 8px;
+}
+
+.dua-table-wrapper {
+  border-radius: 12px;
+  overflow: auto;
+  border: 1px solid #1f2937;
+  background-color: #020617;
+}
+
+.dua-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.dua-table th,
+.dua-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #111827;
+}
+
+.dua-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.dua-table tr:nth-child(even) td {
+  background-color: #020617;
+}
+
+.dua-table tr:hover td {
+  background-color: #030712;
+}
+
+.dua-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  background-color: #111827;
+  color: #e5e7eb;
+}
+
+.dua-muted {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .dua-page {
+    padding-inline: 24px;
+  }
+
+  .dua-title {
+    font-size: 1.6rem;
+  }
+}

@@ -1,8 +1,9 @@
+// src/components/BottomNav.tsx
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./BottomNav.css";
 
-type ActiveTab = "history" | "dashboard" | "register";
+type ActiveTab = "history" | "dashboard" | "register" | "companies" | "audits";
 type RegisterType = "computers" | "medical" | null;
 
 function getActiveFromPath(path: string): ActiveTab {
@@ -10,6 +11,15 @@ function getActiveFromPath(path: string): ActiveTab {
   if (path.startsWith("/computers/checkin")) return "register";
   if (path.startsWith("/medical/checkin")) return "register";
   if (path.startsWith("/computers/frequent")) return "dashboard";
+  if (path.startsWith("/companies")) return "companies";
+
+  // Auditorías de usuario
+  if (path.startsWith("/audit")) return "audits";
+
+  // Rutas "profundas" (detalle, auditorías de equipo) las marcamos como history
+  if (path.startsWith("/devices/")) return "history";
+  if (path.startsWith("/equipment/")) return "history";
+
   return "history";
 }
 
@@ -34,6 +44,11 @@ export default function BottomNav() {
   function navigateAndClose(path: string) {
     navigate(path);
     setShowRegisterMenu(false);
+  }
+
+  function navigateMain(path: string) {
+    setShowRegisterMenu(false);
+    navigate(path);
   }
 
   async function handleLogout() {
@@ -97,7 +112,7 @@ export default function BottomNav() {
                   ? " md3-bottom-nav-action--active"
                   : "")
               }
-              onClick={() => navigate("/devices/entered")}
+              onClick={() => navigateMain("/devices/entered")}
             >
               <span className="md3-bottom-nav-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -115,10 +130,10 @@ export default function BottomNav() {
                   />
                 </svg>
               </span>
-              <span className="md3-bottom-nav-label">History</span>
+              <span className="md3-bottom-nav-label">Historial</span>
             </button>
 
-            {/* DASHBOARD */}
+            {/* DASHBOARD (computadores frecuentes) */}
             <button
               type="button"
               className={
@@ -127,7 +142,7 @@ export default function BottomNav() {
                   ? " md3-bottom-nav-action--active"
                   : "")
               }
-              onClick={() => navigate("/computers/frequent")}
+              onClick={() => navigateMain("/computers/frequent")}
             >
               <span className="md3-bottom-nav-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -147,6 +162,81 @@ export default function BottomNav() {
                 </svg>
               </span>
               <span className="md3-bottom-nav-label">Dashboard</span>
+            </button>
+
+            {/* COMPANIES */}
+            <button
+              type="button"
+              className={
+                "md3-bottom-nav-action" +
+                (active === "companies"
+                  ? " md3-bottom-nav-action--active"
+                  : "")
+              }
+              onClick={() => navigateMain("/companies")}
+            >
+              <span className="md3-bottom-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="3"
+                    width="10"
+                    height="18"
+                    rx="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <rect
+                    x="15"
+                    y="9"
+                    width="5"
+                    height="12"
+                    rx="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="M8 7h2M8 11h2M8 15h2"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="md3-bottom-nav-label">Empresas</span>
+            </button>
+
+            {/* AUDITS */}
+            <button
+              type="button"
+              className={
+                "md3-bottom-nav-action" +
+                (active === "audits"
+                  ? " md3-bottom-nav-action--active"
+                  : "")
+              }
+              onClick={() => navigateMain("/audit/me")}
+            >
+              <span className="md3-bottom-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="3"
+                    y="3"
+                    width="18"
+                    height="18"
+                    rx="2"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="M7 9h10M7 13h6M7 17h4"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="md3-bottom-nav-label">Auditorías</span>
             </button>
 
             {/* REGISTER */}

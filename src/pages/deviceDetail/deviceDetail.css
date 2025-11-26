@@ -214,3 +214,15 @@
     justify-content: center;
   }
 }
+
+.audit-btn {
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #7b4ee2;
+  background-color: #fdf7ff;
+  color: #7b4ee2;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}

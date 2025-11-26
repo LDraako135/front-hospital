@@ -1,0 +1,91 @@
+/* src/pages/auditMy/auditMy.css */
+
+.ma-page {
+  min-height: 100vh;
+  background-color: #020617;
+  color: #e5e7eb;
+  padding: 16px 12px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.ma-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+.ma-header {
+  margin-bottom: 16px;
+}
+
+.ma-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.ma-table-section {
+  margin-top: 8px;
+}
+
+.ma-error-text {
+  color: #fecaca;
+  margin-bottom: 8px;
+}
+
+.ma-table-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #1f2937;
+  background-color: #020617;
+}
+
+.ma-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.ma-table th,
+.ma-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #111827;
+}
+
+.ma-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.ma-table tr:nth-child(even) td {
+  background-color: #020617;
+}
+
+.ma-table tr:hover td {
+  background-color: #030712;
+}
+
+.ma-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  background-color: #111827;
+  color: #e5e7eb;
+}
+
+.ma-muted {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .ma-page {
+    padding-inline: 24px;
+  }
+
+  .ma-title {
+    font-size: 1.6rem;
+  }
+}

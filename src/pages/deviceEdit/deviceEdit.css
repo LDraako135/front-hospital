@@ -1,0 +1,138 @@
+/* src/pages/deviceEdit/deviceEdit.css */
+
+.de-page {
+  min-height: 100vh;
+  background-color: #020617;
+  color: #e5e7eb;
+  padding: 16px 12px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.de-container {
+  width: 100%;
+  max-width: 700px;
+}
+
+.de-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.de-back-btn {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background-color: #020617;
+  color: #e5e7eb;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.18s ease, transform 0.1s ease;
+}
+
+.de-back-btn:hover {
+  background-color: #111827;
+  transform: translateY(-1px);
+}
+
+.de-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.de-error {
+  margin-bottom: 12px;
+  color: #fecaca;
+}
+
+.de-form {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #1f2937;
+  background-color: #020617;
+}
+
+.de-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.de-form-row label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.de-form-row input {
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  background-color: #020617;
+  color: #e5e7eb;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.de-form-row input:focus {
+  outline: none;
+  border-color: #22c55e;
+}
+
+.de-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.de-btn {
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    transform 0.1s ease;
+}
+
+.de-btn-primary {
+  background-color: #22c55e;
+  border-color: #22c55e;
+  color: #022c22;
+}
+
+.de-btn-primary:hover {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  transform: translateY(-1px);
+}
+
+.de-btn-danger {
+  background-color: #991b1b;
+  border-color: #ef4444;
+  color: #fee2e2;
+}
+
+.de-btn-danger:hover {
+  background-color: #7f1d1d;
+  transform: translateY(-1px);
+}
+
+@media (min-width: 768px) {
+  .de-page {
+    padding-inline: 24px;
+  }
+
+  .de-title {
+    font-size: 1.5rem;
+  }
+
+  .de-form {
+    padding: 18px;
+  }
+}

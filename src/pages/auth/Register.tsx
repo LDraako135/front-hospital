@@ -70,7 +70,7 @@ export default function Register() {
 
         <div className="auth-card-body">
           {/* Logo */}
-          <div className="auth-logo-box">Logo..</div>
+      {/*     <div className="auth-logo-box">Logo..</div> */}
 
           {/* Usuario */}
           <label className="auth-label" htmlFor="usuario">

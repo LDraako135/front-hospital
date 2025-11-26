@@ -53,6 +53,7 @@ export default function DeviceDetail() {
     try {
       const res = await fetch(`/api/devices/checkout/${device.id}`, {
         method: "PATCH",
+        credentials: "include", // 👈 importante para enviar la cookie de sesión
       });
 
       if (!res.ok) throw new Error("Error al registrar salida");
@@ -80,7 +81,7 @@ export default function DeviceDetail() {
     }
   };
 
-  // 🔁 Versión sin CORS: solo navega al flujo de “computador frecuente”
+  // Versión sin CORS: solo navega al flujo de “computador frecuente”
   const handleCreateFrequent = () => {
     if (!device) return;
     if (device.kind !== "computer") {
@@ -101,6 +102,12 @@ export default function DeviceDetail() {
         photoUrl: device.photoUrl,
       },
     });
+  };
+
+  // 👉 Ir a auditoría / eliminaciones de este equipo
+  const handleViewAudits = () => {
+    if (!device) return;
+    navigate(`/equipment/${device.id}/audits`);
   };
 
   if (!device) {
@@ -179,6 +186,15 @@ export default function DeviceDetail() {
           <p className="detail-user">
             Salida: {device.exitTime ? device.exitTime : "—"}
           </p>
+
+          {/* Botón para ver auditoría y eliminaciones */}
+          <button
+            type="button"
+            className="audit-btn"
+            onClick={handleViewAudits}
+          >
+            Ver auditoría y eliminaciones
+          </button>
         </div>
 
         {/* FREQUENTLY QR SOLO PARA COMPUTADORES */}
