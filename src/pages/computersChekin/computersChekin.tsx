@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import "./computersChekin.css";
 import BottomNav from "../../components/BottomNav";
 import { api } from "../../lib/api";
+import { logAudit } from "../../utils/audit";
 
 export default function ComputersCheckin() {
   const [segment, setSegment] = useState<0 | 1>(0);
@@ -98,9 +99,20 @@ export default function ComputersCheckin() {
       : "/computers/checkin"; // 👉 /api/computers/checkin
 
     try {
-      await api(endpoint, {
+      // api debe devolverte el JSON del computador creado
+      const created = await api(endpoint, {
         method: "POST",
         body: form,
+      });
+
+      // Auditoría CREATE (computador)
+      await logAudit("CREATE", {
+        id: String(created.id),
+        kind: "computer",
+        brand: created.brand ?? brandTrim,
+        model: created.model ?? modelTrim,
+        userName: created.ownerName ?? ownerNameTrim,
+        userId: created.ownerId ?? ownerIdTrim,
       });
 
       // Reset de formulario
@@ -265,7 +277,6 @@ export default function ComputersCheckin() {
           {/* Columna derecha — Dropper */}
           <section className="md3-column-right">
             <p className="md3-title">Subir Imagen</p>
-           
 
             <div
               className="md3-dropper"
@@ -294,9 +305,7 @@ export default function ComputersCheckin() {
                 </div>
               )}
 
-              {preview && (
-                <img src={preview} className="md3-dropper-preview" />
-              )}
+              {preview && <img src={preview} className="md3-dropper-preview" />}
 
               <input
                 ref={inputRef}
@@ -319,7 +328,6 @@ export default function ComputersCheckin() {
           </button>
         </div>
       </form>
-
     </main>
   );
 }

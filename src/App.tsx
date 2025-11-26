@@ -8,6 +8,8 @@ import Login from "./pages/auth/Login";
 import NotFound from "./pages/NotFound";
 import DeviceDetail from "./pages/deviceDetail/deviceDetail";
 import FrequentComputers from "./pages/frequentComputers/frequentComputers";
+import DeviceEdit from "./pages/DeviceEdit/DeviceEdit";
+import AuditPage from "./pages/Auditoria/AuditPage";
 
 function LayoutWithNav() {
   return (
@@ -32,9 +34,11 @@ export default function App() {
           <Route path="/medical/checkin" element={<MedicalDevicesCheckin />} />
           <Route path="/devices/entered" element={<EnteredDevices />} />
           <Route path="/computers/frequent" element={<FrequentComputers />} />
+          <Route path="/audit" element={<AuditPage />} />
 
-          {/* Ruta corregida */}
+          {/* Detalle y edición */}
           <Route path="/devices/:deviceId" element={<DeviceDetail />} />
+          <Route path="/devices/edit" element={<DeviceEdit />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

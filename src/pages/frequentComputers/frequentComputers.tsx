@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import "./frequentComputers.css";
@@ -10,12 +10,35 @@ type FrequentComputer = {
   color: string | null;
   ownerName: string;
   ownerId: string;
-  photoURL: string | null;
-  checkinURL: string;
-  checkoutURL: string;
+  photoUrl: string | null;
 };
 
 type DeviceType = "computer" | "device";
+
+// Normalizador de texto
+const normalize = (text: string) =>
+  text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+// Construye la URL de la foto igual que en enteredDevices
+function buildPhotoUrl(raw: unknown): string | null {
+  if (!raw) return null;
+  let path = String(raw).trim();
+  if (!path) return null;
+
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  if (path.startsWith("/uploads/")) {
+    return path;
+  }
+
+  if (path.startsWith("uploads/")) {
+    path = path.replace(/^uploads\/+/, "");
+  }
+
+  return `/uploads/${path}`;
+}
 
 export default function FrequentComputers() {
   const navigate = useNavigate();
@@ -25,9 +48,6 @@ export default function FrequentComputers() {
   const [selected, setSelected] = useState<FrequentComputer | null>(null);
   const [deviceType, setDeviceType] = useState<DeviceType>("computer");
 
-  const normalize = (text: string) =>
-    text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-
   useEffect(() => {
     async function load() {
       try {
@@ -36,21 +56,16 @@ export default function FrequentComputers() {
 
         const raw = await res.json();
 
-        const mapped: FrequentComputer[] = raw.map((item: any) => {
-          const d = item.device ?? {};
-
-          return {
-            id: d.id,
-            brand: d.brand ?? "Sin marca",
-            model: d.model ?? "Sin modelo",
-            color: d.color ?? null,
-            ownerName: d.owner?.name ?? "Usuario desconocido",
-            ownerId: d.owner?.id ?? "—",
-            photoURL: d.photoURL ?? null,
-            checkinURL: item.checkinURL,
-            checkoutURL: item.checkoutURL,
-          };
-        });
+        // 👉 Tu backend devuelve computadores directamente
+        const mapped: FrequentComputer[] = raw.map((pc: any) => ({
+          id: String(pc.id),
+          brand: pc.brand ?? "Sin marca",
+          model: pc.model ?? "Sin modelo",
+          color: pc.color ?? null,
+          ownerName: pc.ownerName ?? "Usuario desconocido",
+          ownerId: pc.ownerId ?? "—",
+          photoUrl: buildPhotoUrl(pc.photo),
+        }));
 
         setComputers(mapped);
         setSelected(mapped[0] ?? null);
@@ -62,10 +77,14 @@ export default function FrequentComputers() {
     load();
   }, []);
 
-  const filtered = computers.filter((c) =>
-    normalize(
-      `${c.ownerName} ${c.brand} ${c.model} ${c.color ?? ""}`
-    ).includes(normalize(search))
+  const filtered = useMemo(
+    () =>
+      computers.filter((c) =>
+        normalize(
+          `${c.ownerName} ${c.brand} ${c.model} ${c.color ?? ""}`
+        ).includes(normalize(search))
+      ),
+    [computers, search]
   );
 
   const appOrigin =
@@ -73,10 +92,10 @@ export default function FrequentComputers() {
 
   const handleCreateNew = () => {
     if (deviceType === "computer") {
-      // 👉 Crear nuevo ingreso de computador marcado como frecuente
+      // Crear nuevo ingreso de computador marcado como frecuente
       navigate("/computers/checkin?frequent=1");
     } else {
-      // 👉 Crear nuevo ingreso de dispositivo biomédico (NO frecuente)
+      // Crear nuevo ingreso de dispositivo biomédico (no frecuente)
       navigate("/medical/checkin");
     }
   };
@@ -109,7 +128,11 @@ export default function FrequentComputers() {
             </button>
           </div>
 
-          <button type="button" className="fc-create-btn" onClick={handleCreateNew}>
+          <button
+            type="button"
+            className="fc-create-btn"
+            onClick={handleCreateNew}
+          >
             Crear ingreso nuevo
           </button>
         </div>
@@ -131,7 +154,7 @@ export default function FrequentComputers() {
 
         {/* Contenedor principal */}
         <div className="fc-main-grid">
-          {/* Lista de usuarios (solo computadores frecuentes) */}
+          {/* Lista de computadores frecuentes */}
           {deviceType === "computer" && (
             <div className="fc-list">
               {filtered.map((c) => (
@@ -188,7 +211,6 @@ export default function FrequentComputers() {
                   }}
                 >
                   <QRCodeSVG
-                    // cuando escaneen, abre ruta del FRONT que hace checkin frecuente
                     value={`${appOrigin}/frequent/qr/checkin/${selected.id}`}
                     size={180}
                   />
@@ -207,7 +229,6 @@ export default function FrequentComputers() {
                   }}
                 >
                   <QRCodeSVG
-                    // esta ruta del FRONT registra la salida
                     value={`${appOrigin}/frequent/qr/checkout/${selected.id}`}
                     size={180}
                   />

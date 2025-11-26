@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./enteredDevices.css";
 
@@ -16,9 +16,7 @@ type DeviceCard = {
   color: string | null;
   serial: string | null;
 
-  // texto ya formateado "HH:MM"
   entryTime: string;
-  // 👇 AHORA PUEDE SER null (nuevo = sin salida)
   exitTime: string | null;
 
   photoUrl: string | null;
@@ -30,15 +28,119 @@ const MEDICAL_URL = "/api/medicaldevices";
 const COMPUTERS_URL = "/api/computers";
 const FREQUENT_COMPUTERS_URL = "/api/computers/frequent";
 
+// === Helper AUDITORÍA ===
+async function logAudit(action: "CREATE" | "UPDATE" | "DELETE", device: DeviceCard) {
+  try {
+    await fetch("/api/audit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action,
+        kind: device.kind,
+        deviceId: device.id,
+        brand: device.brand,
+        model: device.model,
+        userName: device.userName,
+        userId: device.userId,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+  } catch (e) {
+    console.warn("No se pudo registrar auditoría:", e);
+  }
+}
+
+// Normalizador para el buscador
+const normalize = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+
+// Construye la URL final de la imagen
+function buildPhotoUrl(raw: unknown): string | null {
+  if (!raw) return null;
+  let path = String(raw).trim();
+  if (!path) return null;
+
+  // Si ya viene con http(s), úsala tal cual
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  // Si viene como /uploads/archivo.jpg
+  if (path.startsWith("/uploads/")) {
+    return path;
+  }
+
+  // Si viene como uploads/archivo.jpg
+  if (path.startsWith("uploads/")) {
+    path = path.replace(/^uploads\/+/, "");
+  }
+
+  // Caso normal: solo filename → "xxxxxx.jpg"
+  return `/uploads/${path}`;
+}
+
+// Hora de entrada desde varios campos
+function getEntryTime(obj: any): string {
+  const raw =
+    obj.checkinAt ||
+    obj.checkInAt ||
+    obj.entryTime ||
+    obj.createdAt ||
+    obj.created_at ||
+    obj.updatedAt ||
+    obj.updated_at;
+
+  if (!raw) return "—";
+
+  const date = new Date(raw);
+  if (isNaN(date.getTime())) {
+    if (typeof raw === "string") return raw;
+    return "—";
+  }
+
+  return date.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// Hora de salida desde varios campos
+function getExitTime(obj: any): string | null {
+  const raw =
+    obj.checkoutAt ||
+    obj.checkOutAt ||
+    obj.exitTime ||
+    obj.exit_time ||
+    obj.exit_at;
+
+  if (!raw) return null;
+
+  const date = new Date(raw);
+  if (isNaN(date.getTime())) {
+    if (typeof raw === "string") return raw;
+    return null;
+  }
+
+  return date.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function EnteredDevices() {
   const navigate = useNavigate();
+
   const [search, setSearch] = useState("");
   const [devices, setDevices] = useState<DeviceCard[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadDevices() {
+    const load = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -56,115 +158,158 @@ export default function EnteredDevices() {
 
         const medicalData: any[] = await medRes.json();
         const computerData: any[] = await compRes.json();
-        const frequentRaw: any[] = await freqRes.json();
+        const frequentData: any[] = await freqRes.json();
 
-        const frequentIds = new Set<string>();
-        frequentRaw.forEach((item: any) => {
-          const d = item.device ?? item;
-          if (d && d.id) frequentIds.add(d.id);
+        const frequentIds = new Set<string>(
+          frequentData.map((f) => String(f.id)).filter(Boolean)
+        );
+
+        const medicalCards: DeviceCard[] = medicalData.map((md) => {
+          const id = String(md.id);
+          const photoUrl = buildPhotoUrl(md.photo);
+
+          return {
+            id,
+            kind: "medical",
+            brand: md.brand ?? md.provider ?? "Sin proveedor",
+            model: md.model ?? "Sin modelo",
+            userName: md.ownerName ?? "Sin usuario",
+            userId: md.ownerId ?? null,
+            color: null,
+            serial: md.serial ?? null,
+            entryTime: getEntryTime(md),
+            exitTime: getExitTime(md),
+            photoUrl,
+            isFrequent: false,
+          };
         });
 
-        const medicalCards: DeviceCard[] = medicalData.map((md) => ({
-          id: md.id,
-          kind: "medical",
-          brand: md.brand,
-          model: md.model,
-          userName: md.owner?.name ?? "Sin usuario",
-          userId: md.owner?.id ?? null,
-          color: null,
-          serial: md.serial ?? null,
+        const computerCards: DeviceCard[] = computerData.map((pc) => {
+          const id = String(pc.id);
+          const photoUrl = buildPhotoUrl(pc.photo);
 
-          // Hora de entrada
-          entryTime: new Date(md.checkinAt ?? md.updatedAt).toLocaleTimeString(
-            "es-ES",
-            {
-              hour: "2-digit",
-              minute: "2-digit",
+          return {
+            id,
+            kind: "computer",
+            brand: pc.brand ?? "Sin marca",
+            model: pc.model ?? "Sin modelo",
+            userName: pc.ownerName ?? "Sin usuario",
+            userId: pc.ownerId ?? null,
+            color: pc.color ?? null,
+            serial: null,
+            entryTime: getEntryTime(pc),
+            exitTime: getExitTime(pc),
+            photoUrl,
+            isFrequent: frequentIds.has(id),
+          };
+        });
+
+        // Mezclamos con sessionStorage (selectedDevice)
+        let merged: DeviceCard[] = [...medicalCards, ...computerCards];
+
+        try {
+          const stored = sessionStorage.getItem("selectedDevice");
+          if (stored) {
+            const storedDevice = JSON.parse(stored) as DeviceCard;
+            if (storedDevice && storedDevice.id) {
+              merged = merged.map((dev) =>
+                dev.id === storedDevice.id
+                  ? {
+                      ...dev,
+                      exitTime: storedDevice.exitTime ?? dev.exitTime,
+                      isFrequent:
+                        storedDevice.isFrequent ?? dev.isFrequent,
+                    }
+                  : dev
+              );
             }
-          ),
+          }
+        } catch {
+          // ignoramos errores de parse
+        }
 
-          // ❌ ANTES: checkoutAt o updatedAt
-          // ✅ AHORA: SOLO checkoutAt. Si no hay, NO tiene salida -> null
-          exitTime: md.checkoutAt
-            ? new Date(md.checkoutAt).toLocaleTimeString("es-ES", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : null,
-
-          photoUrl: md.photoURL ?? null,
-          isFrequent: false,
-        }));
-
-        const computerCards: DeviceCard[] = computerData.map((pc) => ({
-          id: pc.id,
-          kind: "computer",
-          brand: pc.brand,
-          model: pc.model,
-          userName: pc.owner?.name ?? "Sin usuario",
-          userId: pc.owner?.id ?? null,
-          color: pc.color ?? null,
-          serial: null,
-
-          // Hora de entrada
-          entryTime: new Date(pc.checkinAt ?? pc.updatedAt).toLocaleTimeString(
-            "es-ES",
-            {
-              hour: "2-digit",
-              minute: "2-digit",
-            }
-          ),
-
-          // ❌ ANTES: checkoutAt o updatedAt
-          // ✅ AHORA: SOLO checkoutAt, nuevo = null
-          exitTime: pc.checkoutAt
-            ? new Date(pc.checkoutAt).toLocaleTimeString("es-ES", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : null,
-
-          photoUrl: pc.photoURL ?? null,
-          isFrequent: frequentIds.has(pc.id),
-        }));
-
-        setDevices([...medicalCards, ...computerCards]);
+        setDevices(merged);
       } catch (err: any) {
         console.error(err);
-        setError(err?.message ?? "Error al cargar dispositivos");
+        setError(err?.message || "Error al cargar dispositivos");
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    loadDevices();
+    load();
   }, []);
 
-  const normalize = (s: string) =>
-    s
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim();
+  const filteredDevices = useMemo(() => {
+    if (!search) return devices;
+    const term = normalize(search);
 
-  const filteredDevices = devices.filter((d) => {
-    if (!search) return true;
+    return devices.filter((d) => {
+      const frequentLabel =
+        d.kind === "computer"
+          ? d.isFrequent
+            ? "computador frecuente"
+            : "computador no frecuente"
+          : "";
 
-    const frequentLabel =
-      d.kind === "computer"
-        ? d.isFrequent
-          ? "computador frecuente"
-          : "computador no frecuente"
-        : "";
+      const text = normalize(
+        `${d.brand} ${d.model} ${d.userName} ${d.userId ?? ""} ${
+          d.serial ?? ""
+        } ${d.color ?? ""} ${frequentLabel}`
+      );
 
-    const text = normalize(
-      `${d.brand} ${d.model} ${d.userName} ${d.userId ?? ""} ${d.serial ?? ""} ${
-        d.color ?? ""
-      } ${frequentLabel}`
+      return text.includes(term);
+    });
+  }, [devices, search]);
+
+  // === ELIMINAR ===
+  const handleDelete = async (
+    e: React.MouseEvent,
+    device: DeviceCard
+  ) => {
+    e.stopPropagation();
+
+    const ok = window.confirm(
+      `¿Seguro que quieres eliminar este ${
+        device.kind === "medical" ? "dispositivo biomédico" : "computador"
+      }?`
     );
+    if (!ok) return;
 
-    return text.includes(normalize(search));
-  });
+    try {
+      const endpoint =
+        device.kind === "medical"
+          ? `/api/medicaldevices/${device.id}`
+          : `/api/computers/${device.id}`;
+
+      const res = await fetch(endpoint, { method: "DELETE" });
+      if (!res.ok) {
+        throw new Error("Error al eliminar dispositivo");
+      }
+
+      setDevices((prev) =>
+        prev.filter(
+          (d) => !(d.id === device.id && d.kind === device.kind)
+        )
+      );
+
+      // Auditoría
+      await logAudit("DELETE", device);
+
+      alert("Dispositivo eliminado correctamente.");
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar el dispositivo.");
+    }
+  };
+
+  // === EDITAR ===
+  const handleEdit = (e: React.MouseEvent, device: DeviceCard) => {
+    e.stopPropagation();
+    // Guardamos en sessionStorage para usarlo en DeviceEdit
+    sessionStorage.setItem("selectedDevice", JSON.stringify(device));
+    navigate("/devices/edit");
+  };
 
   return (
     <main className="ed-page">
@@ -218,16 +363,12 @@ export default function EnteredDevices() {
 
         {!loading && !error && filteredDevices.length > 0 && (
           <div className="ed-device-list">
-            {filteredDevices.map((d) => (
+            {filteredDevices.map((d, index) => (
               <article
-                key={d.id}
+                key={`${d.kind}-${d.id}-${index}`}
                 className="ed-device-card"
                 onClick={() => {
-                  // 👉 Aquí guardamos lo que va a leer DeviceDetail
-                  sessionStorage.setItem(
-                    "selectedDevice",
-                    JSON.stringify(d)
-                  );
+                  sessionStorage.setItem("selectedDevice", JSON.stringify(d));
                   navigate(`/devices/${d.id}`);
                 }}
                 style={{ cursor: "pointer" }}
@@ -238,6 +379,16 @@ export default function EnteredDevices() {
                       src={d.photoUrl}
                       alt={d.model}
                       className="ed-card-img"
+                      onError={(e) => {
+                        console.warn(
+                          "Error cargando imagen:",
+                          d.photoUrl,
+                          "para id",
+                          d.id
+                        );
+                        (e.currentTarget as HTMLImageElement).style.display =
+                          "none";
+                      }}
                     />
                   ) : (
                     <svg
@@ -315,6 +466,24 @@ export default function EnteredDevices() {
                         </span>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Botones Editar / Eliminar */}
+                  <div className="ed-actions-row">
+                    <button
+                      type="button"
+                      className="ed-action-btn ed-action-btn--edit"
+                      onClick={(e) => handleEdit(e, d)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className="ed-action-btn ed-action-btn--delete"
+                      onClick={(e) => handleDelete(e, d)}
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </div>
               </article>

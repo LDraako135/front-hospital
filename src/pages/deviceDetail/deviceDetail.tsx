@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import "./deviceDetail.css";
@@ -17,17 +17,17 @@ type DeviceCard = {
   color: string | null;
   serial: string | null;
 
-  entryTime: string;       // texto tipo "HH:MM"
+  entryTime: string;       // "HH:MM"
   exitTime: string | null; // null = sin salida
 
   photoUrl: string | null;
-
   isFrequent: boolean;
 };
 
 export default function DeviceDetail() {
   const navigate = useNavigate();
   const [device, setDevice] = useState<DeviceCard | null>(null);
+  const [creatingFrequent, setCreatingFrequent] = useState(false);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("selectedDevice");
@@ -41,66 +41,141 @@ export default function DeviceDetail() {
     }
   }, []);
 
-  const handleExit = async () => {
+  const appOrigin =
+    typeof window !== "undefined" ? window.location.origin : "";
+
+  const isComputer = device?.kind === "computer";
+  const hasExit = Boolean(device?.exitTime);
+
+  // Resolver URL de la foto
+  const resolvedPhoto = useMemo(() => {
+    if (!device?.photoUrl) return null;
+
+    const raw = device.photoUrl.trim();
+
+    if (raw.startsWith("http://") || raw.startsWith("https://")) {
+      return raw;
+    }
+
+    let path = raw.replace(/^\/+/, ""); // quitar barras iniciales
+
+    if (!path.startsWith("uploads/")) {
+      path = `uploads/${path}`;
+    }
+
+    return `/${path}`; // /uploads/archivo.jpg
+  }, [device?.photoUrl]);
+
+  // === DAR SALIDA (solo guarda la hora local, SIN backend) ===
+  const handleExit = () => {
     if (!device) return;
 
-    // Si ya le registraste salida antes, no hace nada
     if (device.exitTime) {
       alert("Este dispositivo ya tiene una salida registrada.");
       return;
     }
 
-    try {
-      const res = await fetch(`/api/devices/checkout/${device.id}`, {
-        method: "PATCH",
-      });
+    const now = new Date();
+    const exitTime = now.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-      if (!res.ok) throw new Error("Error al registrar salida");
+    const updated: DeviceCard = {
+      ...device,
+      exitTime,
+    };
 
-      // La hora de salida la definimos aquí en el front
-      const now = new Date();
-      const exitTime = now.toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+    sessionStorage.setItem("selectedDevice", JSON.stringify(updated));
+    setDevice(updated);
 
-      const updated: DeviceCard = {
-        ...device,
-        exitTime,
-      };
-
-      sessionStorage.setItem("selectedDevice", JSON.stringify(updated));
-      setDevice(updated);
-
-      alert("Salida registrada");
-      navigate("/devices/entered");
-    } catch (err) {
-      console.error(err);
-      alert("Error registrando salida");
-    }
+    alert("Salida registrada correctamente.");
+    // Si quieres volver a la lista, descomenta:
+    // navigate("/devices/entered");
   };
 
-  // 🔁 Versión sin CORS: solo navega al flujo de “computador frecuente”
-  const handleCreateFrequent = () => {
+  // === DAR ENTRADA FRECUENTE (crear computador frecuente) ===
+  const handleCreateFrequent = async () => {
     if (!device) return;
-    if (device.kind !== "computer") {
+    if (!isComputer) {
       alert("Solo los computadores pueden ser frecuentes.");
       return;
     }
+    if (device.isFrequent) {
+      alert("Este computador ya es frecuente.");
+      return;
+    }
 
-    // Lo mandamos al formulario de computadores en modo frecuente
-    navigate("/computers/checkin?frequent=1", {
-      state: {
-        fromDeviceDetail: true,
-        deviceId: device.id,
-        brand: device.brand,
-        model: device.model,
-        color: device.color,
-        userName: device.userName,
-        userId: device.userId,
-        photoUrl: device.photoUrl,
-      },
-    });
+    const ok = window.confirm(
+      "¿Deseas marcar este computador como frecuente y crear su registro de entrada frecuente?"
+    );
+    if (!ok) return;
+
+    try {
+      setCreatingFrequent(true);
+
+      const form = new FormData();
+      form.append("brand", device.brand);
+      form.append("model", device.model);
+      form.append("color", device.color ?? "");
+      form.append("ownerName", device.userName);
+      form.append("ownerId", device.userId ?? "");
+      form.append("descriptions", "Creado desde detalle de dispositivo");
+      form.append("isFrequent", "true");
+
+      // Reusar la foto si existe
+      if (resolvedPhoto) {
+        try {
+          const imgRes = await fetch(resolvedPhoto);
+          if (imgRes.ok) {
+            const blob = await imgRes.blob();
+            const mime = blob.type || "image/jpeg";
+            const ext = mime.split("/")[1] || "jpg";
+            const filename = `${device.model || "computador"}-frecuente.${ext}`;
+            const file = new File([blob], filename, { type: mime });
+
+            form.append("photo", file);
+          } else {
+            console.warn(
+              "No se pudo leer la foto para frecuente, status:",
+              imgRes.status
+            );
+          }
+        } catch (e) {
+          console.warn("Error obteniendo la imagen para frecuente:", e);
+        }
+      }
+
+      const res = await fetch("/api/computers/frequent", {
+        method: "POST",
+        body: form,
+      });
+
+      if (!res.ok) {
+        let msg = "Error al marcar como frecuente.";
+        try {
+          const data = await res.json();
+          if (data?.message) msg = data.message;
+        } catch {
+          // ignorar si no hay JSON
+        }
+        throw new Error(msg);
+      }
+
+      const updated: DeviceCard = {
+        ...device,
+        isFrequent: true,
+      };
+      sessionStorage.setItem("selectedDevice", JSON.stringify(updated));
+      setDevice(updated);
+
+      alert("Computador marcado como frecuente correctamente.");
+    } catch (err: any) {
+      console.error(err);
+      alert(err?.message || "Error al marcar como frecuente.");
+    } finally {
+      setCreatingFrequent(false);
+    }
   };
 
   if (!device) {
@@ -111,12 +186,6 @@ export default function DeviceDetail() {
       </main>
     );
   }
-
-  const appOrigin =
-    typeof window !== "undefined" ? window.location.origin : "";
-
-  const isComputer = device.kind === "computer";
-  const hasExit = Boolean(device.exitTime);
 
   return (
     <main className="detail-page">
@@ -131,8 +200,8 @@ export default function DeviceDetail() {
 
         {/* IMAGEN */}
         <div className="detail-image-box">
-          {device.photoUrl ? (
-            <img src={device.photoUrl} className="detail-image" />
+          {resolvedPhoto ? (
+            <img src={resolvedPhoto} className="detail-image" />
           ) : (
             <div className="detail-placeholder">
               <svg viewBox="0 0 200 200">
@@ -164,9 +233,7 @@ export default function DeviceDetail() {
             {device.serial && (
               <span className="tag">Serial: {device.serial}</span>
             )}
-            {device.color && (
-              <span className="tag">Color: {device.color}</span>
-            )}
+            {device.color && <span className="tag">Color: {device.color}</span>}
             <span className="tag">{device.brand}</span>
           </div>
         </div>
@@ -194,8 +261,14 @@ export default function DeviceDetail() {
               </p>
 
               {!device.isFrequent && (
-                <button className="freq-btn" onClick={handleCreateFrequent}>
-                  Dar entrada frecuente
+                <button
+                  className="freq-btn"
+                  onClick={handleCreateFrequent}
+                  disabled={creatingFrequent}
+                >
+                  {creatingFrequent
+                    ? "Marcando como frecuente…"
+                    : "Dar entrada frecuente"}
                 </button>
               )}
 

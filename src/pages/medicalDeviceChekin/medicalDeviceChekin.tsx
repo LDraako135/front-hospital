@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import "./MedicalDevicesCheckin.css";
+import { logAudit } from "../../utils/audit";
 
 export default function MedicalDeviceCheckin() {
   // === CAMPOS QUE EL BACKEND ESPERA ===
@@ -38,17 +39,25 @@ export default function MedicalDeviceCheckin() {
       return;
     }
 
+    const brandTrim = brand.trim();
+    const modelTrim = model.trim();
+    const ownerNameTrim = ownerName.trim();
+    const ownerIdTrim = ownerId.trim();
+    const serialTrim = serial.trim();
+    const providerTrim = provider.trim();
+    const descriptionsTrim = descriptions.trim();
+
     const form = new FormData();
-    form.append("brand", brand.trim());
-    form.append("model", model.trim());
-    form.append("ownerName", ownerName.trim());
-    form.append("ownerId", ownerId.trim());
-    form.append("serial", serial.trim());
+    form.append("brand", brandTrim);
+    form.append("model", modelTrim);
+    form.append("ownerName", ownerNameTrim);
+    form.append("ownerId", ownerIdTrim);
+    form.append("serial", serialTrim);
     form.append("photo", file);
 
     // Extras opcionales
-    form.append("provider", provider.trim());
-    form.append("descriptions", descriptions.trim());
+    form.append("provider", providerTrim);
+    form.append("descriptions", descriptionsTrim);
 
     try {
       const res = await fetch("/api/medicaldevices/checkin", {
@@ -66,6 +75,18 @@ export default function MedicalDeviceCheckin() {
         }
         setError(msg);
       } else {
+        const created = await res.json();
+
+        // Auditoría CREATE (dispositivo biomédico)
+        await logAudit("CREATE", {
+          id: String(created.id),
+          kind: "medical",
+          brand: created.brand ?? brandTrim,
+          model: created.model ?? modelTrim,
+          userName: created.ownerName ?? ownerNameTrim,
+          userId: created.ownerId ?? ownerIdTrim,
+        });
+
         setBrand("");
         setModel("");
         setSerial("");
@@ -177,7 +198,9 @@ export default function MedicalDeviceCheckin() {
 
               {/* Descripciones */}
               <div className="md3-field">
-                <label className="md3-field-label">Descripciones del artículo</label>
+                <label className="md3-field-label">
+                  Descripciones del artículo
+                </label>
                 <div className="md3-textfield md3-textfield--textarea">
                   <textarea
                     rows={4}

@@ -295,3 +295,19 @@
     grid-template-columns: 1fr;
   }
 }
+
+.ed-actions-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.ed-action-btn {
+  border-radius: 999px;
+  border: none;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.ed-action-btn--edit { background:#0078ff; color:#fff; }
+.ed-action-btn--delete { background:#ff5252; color:#fff; }

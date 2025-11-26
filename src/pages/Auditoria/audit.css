@@ -1,0 +1,24 @@
+.audit-card { padding: 16px; }
+.audit-title { font-size: 22px; margin-bottom: 12px; }
+.audit-search-row { margin-bottom: 12px; }
+.audit-search-input {
+  width: 100%; padding: 8px 12px; border-radius: 999px; border: 1px solid #ddd;
+}
+.audit-table { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.audit-table-header, .audit-table-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr 0.9fr 1.4fr 1.3fr;
+  gap: 8px;
+  font-size: 13px;
+}
+.audit-table-header { font-weight: 600; color:#444; border-bottom:1px solid #eee; padding-bottom:4px; }
+.audit-table-row { padding: 4px 0; border-bottom:1px solid #f5f5f5; }
+.audit-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #fff;
+}
+.audit-badge--create { background:#2e7d32; }
+.audit-badge--update { background:#0277bd; }
+.audit-badge--delete { background:#c62828; }
