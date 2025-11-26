@@ -199,22 +199,6 @@ docker run -p 5173:5173 front-hospital
 
 ------------------------------------------------------------------------
 
-## 8. 🏗️ Arquitectura del proyecto
-
-### Diagrama general (descriptivo)
-
-    UI Components
-          ↓
-    Pages (views)
-          ↓
-    Hooks / Stores
-          ↓
-    lib/api.ts  →  Backend (Elysia + Bun)
-
-Si deseas, puedo generar un **UML completo en PDF o imagen**.
-
-------------------------------------------------------------------------
-
 ## ✔️ Estado del proyecto
 
 Sistema funcionando correctamente con integración al backend
