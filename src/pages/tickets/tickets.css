@@ -1,0 +1,207 @@
+
+.tk-select {
+  border-radius: 999px;
+  border: 1px solid #d3c3ff;
+  padding: 8px 12px;
+  background: #f3e9ff;
+  font-size: 13px;
+  outline: none;
+}
+
+/* Lista de tickets */
+.tk-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Card de ticket */
+.tk-card {
+  background-color: #fdf7ff;
+  border-radius: 20px;
+  border: 1px solid #e0d4f7;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Header */
+.tk-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.tk-card-title {
+  font-size: 16px;
+  margin: 0;
+  color: #24182f;
+}
+
+.tk-card-meta {
+  font-size: 13px;
+  color: #7e728d;
+}
+
+/* Badges */
+.tk-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.tk-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Estado */
+.tk-badge-status--open {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.tk-badge-status--in_progress {
+  background-color: #fff3cd;
+  color: #8a6d3b;
+}
+
+.tk-badge-status--closed {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+/* Prioridad */
+.tk-badge-priority--low {
+  background-color: #e0f2f1;
+  color: #00695c;
+}
+
+.tk-badge-priority--medium {
+  background-color: #ede7f6;
+  color: #4527a0;
+}
+
+.tk-badge-priority--high {
+  background-color: #ffebee;
+  color: #b71c1c;
+}
+
+/* Descripción */
+.tk-card-description {
+  font-size: 13px;
+  color: #4e465a;
+  margin: 4px 0 0 0;
+}
+
+/* Info row */
+.tk-card-info-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.tk-card-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tk-info-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7e728d;
+}
+
+.tk-info-value {
+  font-size: 13px;
+  color: #24182f;
+}
+
+/* Acciones */
+.tk-card-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Form nuevo ticket */
+.tk-new-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e0d4f7;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.tk-new-title {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #24182f;
+}
+
+.tk-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+
+.tk-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.tk-form-field-full {
+  grid-column: 1 / -1;
+}
+
+.tk-form-field label {
+  color: #7e728d;
+  font-size: 12px;
+}
+
+.tk-form-field input,
+.tk-form-field select,
+.tk-form-field textarea {
+  border-radius: 12px;
+  border: 1px solid #d3c3ff;
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+  background: #fdf9ff;
+  resize: vertical;
+}
+
+.tk-new-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Responsivo */
+@media (max-width: 840px) {
+  .tk-card-info-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .tk-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

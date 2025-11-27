@@ -153,8 +153,7 @@ export default function EnteredDevices() {
 
         if (!medRes.ok) throw new Error("Error al cargar dispositivos médicos");
         if (!compRes.ok) throw new Error("Error al cargar computadores");
-        if (!freqRes.ok)
-          throw new Error("Error al cargar computadores frecuentes");
+        if (!freqRes.ok) throw new Error("Error al cargar computadores frecuentes");
 
         const medicalData: any[] = await medRes.json();
         const computerData: any[] = await compRes.json();
@@ -217,8 +216,7 @@ export default function EnteredDevices() {
                   ? {
                       ...dev,
                       exitTime: storedDevice.exitTime ?? dev.exitTime,
-                      isFrequent:
-                        storedDevice.isFrequent ?? dev.isFrequent,
+                      isFrequent: storedDevice.isFrequent ?? dev.isFrequent,
                     }
                   : dev
               );
@@ -263,10 +261,7 @@ export default function EnteredDevices() {
   }, [devices, search]);
 
   // === ELIMINAR ===
-  const handleDelete = async (
-    e: React.MouseEvent,
-    device: DeviceCard
-  ) => {
+  const handleDelete = async (e: React.MouseEvent, device: DeviceCard) => {
     e.stopPropagation();
 
     const ok = window.confirm(
@@ -288,9 +283,7 @@ export default function EnteredDevices() {
       }
 
       setDevices((prev) =>
-        prev.filter(
-          (d) => !(d.id === device.id && d.kind === device.kind)
-        )
+        prev.filter((d) => !(d.id === device.id && d.kind === device.kind))
       );
 
       // Auditoría
@@ -345,7 +338,7 @@ export default function EnteredDevices() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className="ed-search-icon"></span>
+            <span className="ed-search-icon">🔍</span>
           </div>
         </div>
 
@@ -417,14 +410,20 @@ export default function EnteredDevices() {
                       </div>
 
                       <div className="ed-tags-column">
-                        <button className="ed-tag">
+                        <button className="ed-tag ed-tag--kind">
                           {d.kind === "medical"
                             ? "Dispositivo biomédico"
                             : "Computador"}
                         </button>
 
                         {d.kind === "computer" && (
-                          <button className="ed-tag">
+                          <button
+                            className={`ed-tag ${
+                              d.isFrequent
+                                ? "ed-tag--frequent"
+                                : "ed-tag--not-frequent"
+                            }`}
+                          >
                             {d.isFrequent
                               ? "Computador frecuente"
                               : "Computador no frecuente"}
@@ -432,11 +431,15 @@ export default function EnteredDevices() {
                         )}
 
                         {d.serial && (
-                          <button className="ed-tag">Serial: {d.serial}</button>
+                          <button className="ed-tag ed-tag--info">
+                            Serial: {d.serial}
+                          </button>
                         )}
 
                         {d.color && (
-                          <button className="ed-tag">Color: {d.color}</button>
+                          <button className="ed-tag ed-tag--info">
+                            Color: {d.color}
+                          </button>
                         )}
                       </div>
                     </div>

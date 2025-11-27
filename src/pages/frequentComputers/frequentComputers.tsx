@@ -43,20 +43,26 @@ function buildPhotoUrl(raw: unknown): string | null {
 export default function FrequentComputers() {
   const navigate = useNavigate();
 
-  const [computers, setComputers] = useState<FrequentComputer[]>([]);
+  // Esta lista se reutiliza para computadores o dispositivos biomédicos
+  const [items, setItems] = useState<FrequentComputer[]>([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<FrequentComputer | null>(null);
   const [deviceType, setDeviceType] = useState<DeviceType>("computer");
 
+  // Cargar según el tipo de dispositivo seleccionado
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/computers/frequent");
+        const url =
+          deviceType === "computer"
+            ? "/api/computers/frequent"
+            : "/api/medicaldevices";
+
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Error al cargar frecuentes");
 
         const raw = await res.json();
 
-        // 👉 Tu backend devuelve computadores directamente
         const mapped: FrequentComputer[] = raw.map((pc: any) => ({
           id: String(pc.id),
           brand: pc.brand ?? "Sin marca",
@@ -67,25 +73,30 @@ export default function FrequentComputers() {
           photoUrl: buildPhotoUrl(pc.photo),
         }));
 
-        setComputers(mapped);
+        setItems(mapped);
         setSelected(mapped[0] ?? null);
       } catch (e) {
         console.error(e);
+        setItems([]);
+        setSelected(null);
       }
     }
 
     load();
-  }, []);
+  }, [deviceType]);
 
-  const filtered = useMemo(
-    () =>
-      computers.filter((c) =>
+  // Filtrado: solo aplica búsqueda para computadores
+  const visibleItems = useMemo(() => {
+    if (deviceType === "computer") {
+      return items.filter((c) =>
         normalize(
           `${c.ownerName} ${c.brand} ${c.model} ${c.color ?? ""}`
         ).includes(normalize(search))
-      ),
-    [computers, search]
-  );
+      );
+    }
+    // Para biomédicos, por ahora mostramos todo sin buscador
+    return items;
+  }, [items, search, deviceType]);
 
   const appOrigin =
     typeof window !== "undefined" ? window.location.origin : "";
@@ -110,18 +121,16 @@ export default function FrequentComputers() {
           <div className="fc-type-toggle">
             <button
               type="button"
-              className={`fc-type-btn ${
-                deviceType === "computer" ? "fc-type-btn--active" : ""
-              }`}
+              className={`fc-type-btn ${deviceType === "computer" ? "fc-type-btn--active" : ""
+                }`}
               onClick={() => setDeviceType("computer")}
             >
               Computador
             </button>
             <button
               type="button"
-              className={`fc-type-btn ${
-                deviceType === "device" ? "fc-type-btn--active" : ""
-              }`}
+              className={`fc-type-btn ${deviceType === "device" ? "fc-type-btn--active" : ""
+                }`}
               onClick={() => setDeviceType("device")}
             >
               Dispositivo biomédico
@@ -137,7 +146,7 @@ export default function FrequentComputers() {
           </button>
         </div>
 
-        {/* Buscador (solo tiene sentido para computadores frecuentes) */}
+        {/* Buscador (solo para computadores frecuentes) */}
         {deviceType === "computer" && (
           <div className="fd-search-row">
             <div className="fc-search-box">
@@ -154,47 +163,34 @@ export default function FrequentComputers() {
 
         {/* Contenedor principal */}
         <div className="fc-main-grid">
-          {/* Lista de computadores frecuentes */}
-          {deviceType === "computer" && (
-            <div className="fc-list">
-              {filtered.map((c) => (
-                <div
-                  key={c.id}
-                  className="fc-item"
-                  onClick={() => setSelected(c)}
-                  style={{
-                    cursor: "pointer",
-                    background: selected?.id === c.id ? "#ebe4ff" : "",
-                    borderColor: selected?.id === c.id ? "#b9a5ff" : "",
-                  }}
-                >
-                  <p className="fc-item-name">{c.ownerName}</p>
-                  <p className="fc-item-desc">
-                    {c.brand} {c.model} {c.color ? `(${c.color})` : ""}
-                  </p>
-                </div>
-              ))}
-
-              {filtered.length === 0 && (
-                <p className="ed-status-text">
-                  No hay computadores frecuentes registrados.
+          {/* Lista de frecuentes (computadores o biomédicos) */}
+          <div className="fc-list">
+            {visibleItems.map((c) => (
+              <div
+                key={c.id}
+                className="fc-item"
+                onClick={() => setSelected(c)}
+                style={{
+                  cursor: "pointer",
+                  background: selected?.id === c.id ? "#ebe4ff" : "",
+                  borderColor: selected?.id === c.id ? "#b9a5ff" : "",
+                }}
+              >
+                <p className="fc-item-name">{c.ownerName}</p>
+                <p className="fc-item-desc">
+                  {c.brand} {c.model} {c.color ? `(${c.color})` : ""}
                 </p>
-              )}
-            </div>
-          )}
+              </div>
+            ))}
 
-          {/* Mensaje para dispositivos biomédicos */}
-          {deviceType === "device" && (
-            <div className="fc-empty-devices">
+            {visibleItems.length === 0 && (
               <p className="ed-status-text">
-                Los dispositivos biomédicos no se manejan como frecuentes.
+                {deviceType === "computer"
+                  ? "No hay computadores frecuentes registrados."
+                  : "No hay dispositivos biomédicos frecuentes registrados."}
               </p>
-              <p className="ed-status-text">
-                Usa el botón <strong>“Crear ingreso nuevo”</strong> para
-                registrar un ingreso biomédico.
-              </p>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* QRs dinámicos SOLO para computadores frecuentes */}
           {deviceType === "computer" && selected && (
@@ -236,6 +232,7 @@ export default function FrequentComputers() {
               </div>
             </div>
           )}
+
         </div>
       </section>
     </main>

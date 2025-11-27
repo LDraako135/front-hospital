@@ -15,13 +15,23 @@ export default function Register() {
 
   const handleRegister = async () => {
     setError(null);
+
     if (!name || !email || !password || !confirmPassword) {
       setError("Por favor completa todos los campos.");
       return;
     }
 
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres.");
+      setPassword("");
+      setConfirmPassword("");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden.");
+      setPassword("");
+      setConfirmPassword("");
       return;
     }
 
@@ -31,7 +41,7 @@ export default function Register() {
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch("/auth/sign-up/email", {
         method: "POST",
@@ -57,6 +67,9 @@ export default function Register() {
       navigate("/login");
     } catch (err: any) {
       setError(err.message || "Error en el registro");
+      setPassword("");
+      setConfirmPassword("");
+    } finally {
       setLoading(false);
     }
   };
@@ -69,10 +82,7 @@ export default function Register() {
         </div>
 
         <div className="auth-card-body">
-          {/* Logo */}
-          <div className="auth-logo-box">Logo..</div>
-
-          {/* Usuario */}
+          {/* Nombre */}
           <label className="auth-label" htmlFor="usuario">
             Nombre
           </label>
@@ -124,16 +134,36 @@ export default function Register() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
+          {/* Captcha */}
+          <div
+            style={{
+              margin: "20px 0",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "YOUR_SITE_KEY_HERE"}
+              sitekey={
+                import.meta.env.VITE_RECAPTCHA_SITE_KEY || "YOUR_SITE_KEY_HERE"
+              }
               onChange={(token) => setCaptchaToken(token)}
             />
           </div>
 
-          {error && <p className="auth-error-text" style={{ color: "red", textAlign: "center" }}>{error}</p>}
+          {error && (
+            <p
+              className="auth-error-text"
+              style={{ color: "red", textAlign: "center" }}
+            >
+              {error}
+            </p>
+          )}
 
-          <button className="auth-submit-button" onClick={handleRegister} disabled={loading}>
+          <button
+            className="auth-submit-button"
+            onClick={handleRegister}
+            disabled={loading}
+          >
             {loading ? "Registrando..." : "Registrarse"}
           </button>
 

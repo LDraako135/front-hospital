@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useNavigate } from "react-router-dom";
 import "./Auth.css";
@@ -11,10 +11,18 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
     setError(null);
+
     if (!username || !password) {
       setError("Por favor completa todos los campos.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres.");
+      setPassword("");
       return;
     }
 
@@ -24,7 +32,7 @@ export default function Login() {
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch("/auth/sign-in/email", {
         method: "POST",
@@ -45,10 +53,18 @@ export default function Login() {
         throw new Error(data.message || "Error en el login");
       }
 
-      // Login exitoso
+      // 🔹 MUY IMPORTANTE: marcar que el usuario está logueado
+      localStorage.setItem("loggedIn", "true");
+
+      // (Opcional: aquí también podrías guardar info del usuario o token si lo necesitas)
+      // localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Login exitoso -> al dashboard
       navigate("/computers/checkin");
     } catch (err: any) {
       setError(err.message || "Error en el login");
+      setPassword("");
+    } finally {
       setLoading(false);
     }
   };
@@ -60,11 +76,8 @@ export default function Login() {
           <h1>Inicio Sesión</h1>
         </div>
 
-        <div className="auth-card-body">
-          {/* Logo */}
-          <div className="auth-logo-box">Logo..</div>
-
-          {/* Usuario */}
+        <form className="auth-card-body" onSubmit={handleLogin}>
+          {/* Correo */}
           <label className="auth-label" htmlFor="usuario">
             Correo
           </label>
@@ -90,28 +103,50 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
+          {/* Captcha */}
+          <div
+            style={{
+              margin: "20px 0",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "YOUR_SITE_KEY_HERE"}
+              sitekey={
+                import.meta.env.VITE_RECAPTCHA_SITE_KEY || "YOUR_SITE_KEY_HERE"
+              }
               onChange={(token) => setCaptchaToken(token)}
             />
           </div>
 
-          {error && <p className="auth-error-text" style={{ color: "red", textAlign: "center" }}>{error}</p>}
+          {/* Mensaje de error */}
+          {error && (
+            <p
+              className="auth-error-text"
+              style={{ color: "red", textAlign: "center" }}
+            >
+              {error}
+            </p>
+          )}
 
-          {/* Links inferiores */}
+          {/* Enlace "No recuerdo mi contraseña" */}
           <p className="auth-helper-text">
             No recuerdo mi contraseña
             <button
               type="button"
               className="auth-link-button"
-              onClick={() => alert("Ir a recuperar contraseña")}
+              onClick={() => navigate("/forgot-password")}
             >
               (click aquí.)
             </button>
           </p>
 
-          <button className="auth-submit-button" onClick={handleLogin} disabled={loading}>
+          {/* Botón enviar */}
+          <button
+            type="submit"
+            className="auth-submit-button"
+            disabled={loading}
+          >
             {loading ? "Ingresando..." : "Ingresar"}
           </button>
 
@@ -121,7 +156,7 @@ export default function Login() {
               (Regístrate aquí).
             </a>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

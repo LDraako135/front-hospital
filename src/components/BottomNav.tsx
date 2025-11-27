@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./BottomNav.css";
 
-type ActiveTab = "history" | "dashboard" | "register" | "audit";
+type ActiveTab = "history" | "dashboard" | "register" | "audit" | "tickets";
 type RegisterType = "computers" | "medical" | null;
 
 function getActiveFromPath(path: string): ActiveTab {
@@ -10,6 +10,7 @@ function getActiveFromPath(path: string): ActiveTab {
   if (path.startsWith("/computers/checkin")) return "register";
   if (path.startsWith("/medical/checkin")) return "register";
   if (path.startsWith("/computers/frequent")) return "dashboard";
+  if (path.startsWith("/tickets")) return "tickets";
   if (path.startsWith("/audit")) return "audit";
   return "history";
 }
@@ -148,6 +149,45 @@ export default function BottomNav() {
                 </svg>
               </span>
               <span className="md3-bottom-nav-label">Dashboard</span>
+            </button>
+
+            {/* TICKETS */}
+            <button
+              type="button"
+              className={
+                "md3-bottom-nav-action" +
+                (active === "tickets"
+                  ? " md3-bottom-nav-action--active"
+                  : "")
+              }
+              onClick={() => navigate("/tickets")}
+            >
+              <span className="md3-bottom-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="2"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="M8 9h8M8 13h5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M8 17h4"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <span className="md3-bottom-nav-label">Tickets</span>
             </button>
 
             {/* AUDITORÍA */}
